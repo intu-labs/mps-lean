@@ -29,12 +29,16 @@ func (sig Signature) ToEthBytes() ([]byte, error) {
 		return nil, err
 	}
 
-	toECDSA := sig.R.ToECDSA()
-	recoverId := byte(dcrm256k1.Get_ecdsa_sign_v(toECDSA.X, toECDSA.Y))
+	recoverId := sig.GetRecoverId()
 
 	sigbytes := append(rb[1:], sb...)
 	sigbytes = append(sigbytes, recoverId)
 	return sigbytes, nil
+}
+
+func (sig Signature) GetRecoverId() byte {
+	toECDSA := sig.R.ToECDSA()
+	return byte(dcrm256k1.Get_ecdsa_sign_v(toECDSA.X, toECDSA.Y))
 }
 
 // Verify is a custom signature format using curve data.
