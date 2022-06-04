@@ -43,7 +43,7 @@ func (sig Signature) GetRecoverId() byte {
 
 func (sig Signature) GetEthRecoverId() byte {
 	toECDSA := sig.R.ToECDSA()
-	return byte(dcrm256k1.Get_ecdsa_sign_v(toECDSA.X, toECDSA.Y) - 27)
+	return byte(dcrm256k1.Get_ecdsa_sign_v(toECDSA.X, toECDSA.Y) + 27)
 }
 
 // Verify is a custom signature format using curve data.

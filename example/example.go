@@ -302,7 +302,7 @@ func main() {
 	for _, id := range ids {
 		wg.Add(1)
 		go func(id party.ID) {
-			pl := pool.NewPool(0)
+			pl := pool.NewPool(10)
 			defer pl.TearDown()
 			if err := All(id, ids, threshold, messageToSign, net, &wg, pl); err != nil {
 				fmt.Println(err)
