@@ -1,6 +1,7 @@
 package ecdsa
 
 import (
+	dcrm256k1 "github.com/anyswap/FastMulThreshold-DSA/crypto/secp256k1"
 	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
 )
 
@@ -12,6 +13,28 @@ type Signature struct {
 // EmptySignature returns a new signature with a given curve, ready to be unmarshalled.
 func EmptySignature(group curve.Curve) Signature {
 	return Signature{R: group.NewPoint(), S: group.NewScalar()}
+}
+
+// Marshal marshals a signature to a byte slice.
+func (sig Signature) ToEthBytes() ([]byte, error) {
+	rb, err := sig.R.MarshalBinary()
+
+	if err != nil {
+		return nil, err
+	}
+
+	sb, err := sig.S.MarshalBinary()
+
+	if err != nil {
+		return nil, err
+	}
+
+	toECDSA := sig.R.ToECDSA()
+	recoverId := byte(dcrm256k1.Get_ecdsa_sign_v(toECDSA.X, toECDSA.Y))
+
+	sigbytes := append(rb[1:], sb...)
+	sigbytes = append(sigbytes, recoverId)
+	return sigbytes, nil
 }
 
 // Verify is a custom signature format using curve data.
