@@ -147,6 +147,7 @@ func (h *MultiHandler) Accept(msg *Message) {
 	}
 
 	h.store(msg)
+
 	if h.currentRound.Number() != msg.RoundNumber {
 		return
 	}
@@ -228,6 +229,10 @@ func (h *MultiHandler) verifyMessage(msg *Message) error {
 	}
 
 	return nil
+}
+
+func (h *MultiHandler) Finalize() {
+	h.finalize()
 }
 
 func (h *MultiHandler) finalize() {

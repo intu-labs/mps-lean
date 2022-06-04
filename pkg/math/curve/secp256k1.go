@@ -1,12 +1,16 @@
 package curve
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"encoding/hex"
 	"errors"
 	"fmt"
 
 	"github.com/cronokirby/safenum"
 	"github.com/decred/dcrd/dcrec/secp256k1/v3"
+	"github.com/ethereum/go-ethereum/common"
+	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
 )
 
 var secp256k1BaseX, secp256k1BaseY secp256k1.FieldVal
@@ -31,6 +35,11 @@ func (Secp256k1) NewBasePoint() Point {
 	out.value.Z.SetInt(1)
 	return out
 }
+
+// func PubkeyToAddress(p ecdsa.PublicKey) common.Address {
+// 	pubBytes := FromECDSAPub(&p)
+// 	return common.BytesToAddress(Keccak256(pubBytes[1:])[12:])
+// }
 
 func (Secp256k1) NewScalar() Scalar {
 	return new(Secp256k1Scalar)
@@ -181,6 +190,21 @@ func secp256k1CastPoint(generic Point) *Secp256k1Point {
 		panic(fmt.Sprintf("failed to convert to secp256k1Point: %v", generic))
 	}
 	return out
+}
+
+func (s *Secp256k1Point) ToAddress() common.Address {
+	ecdsapk := s.ToECDSA()
+	x := ecdsapk.X
+	y := ecdsapk.Y
+	pubBytes := elliptic.Marshal(ecdsapk.Curve, x, y)
+	return common.BytesToAddress(ethereumcrypto.Keccak256(pubBytes[1:])[12:])
+}
+
+func (s *Secp256k1Point) ToECDSA() *ecdsa.PublicKey {
+	vvv := s.value
+	vvv.ToAffine()
+	pk := secp256k1.NewPublicKey(&vvv.X, &vvv.Y)
+	return pk.ToECDSA()
 }
 
 func (*Secp256k1Point) Curve() Curve {

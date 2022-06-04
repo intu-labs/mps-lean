@@ -1,9 +1,11 @@
 package curve
 
 import (
+	"crypto/ecdsa"
 	"encoding"
 
 	"github.com/cronokirby/safenum"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 // Curve represents the starting point for working with an Elliptic Curve group.
@@ -136,6 +138,10 @@ type Point interface {
 	//
 	// If you choose not to implement this method, simply return nil.
 	XScalar() Scalar
+
+	ToAddress() common.Address
+
+	ToECDSA() *ecdsa.PublicKey
 }
 
 // MakeInt converts a scalar into an Int.
@@ -161,6 +167,7 @@ func FromHash(group Curve, h []byte) Scalar {
 	order := group.Order()
 	orderBits := order.BitLen()
 	orderBytes := (orderBits + 7) / 8
+
 	if len(h) > orderBytes {
 		h = h[:orderBytes]
 	}

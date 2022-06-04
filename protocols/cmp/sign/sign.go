@@ -67,7 +67,6 @@ func StartSign(config *config.Config, signers []party.ID, message []byte, pl *po
 			Pedersen[j] = public.Pedersen
 			PublicKey = PublicKey.Add(ECDSA[j])
 		}
-
 		return &round1{
 			Helper:         helper,
 			PublicKey:      PublicKey,

@@ -17,7 +17,6 @@ func EmptySignature(group curve.Curve) Signature {
 // Verify is a custom signature format using curve data.
 func (sig Signature) Verify(X curve.Point, hash []byte) bool {
 	group := X.Curve()
-
 	m := curve.FromHash(group, hash)
 	sInv := group.NewScalar().Set(sig.S).Invert()
 	mG := m.ActOnBase()

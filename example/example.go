@@ -1,10 +1,15 @@
 package main
 
 import (
+	cryptoecdsa "crypto/ecdsa"
+	"crypto/elliptic"
 	"errors"
 	"fmt"
 	"sync"
 
+	dcrm256k1 "github.com/anyswap/FastMulThreshold-DSA/crypto/secp256k1"
+	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
+	ethereumsecp256k1 "github.com/ethereum/go-ethereum/crypto/secp256k1"
 	"github.com/taurusgroup/multi-party-sig/internal/test"
 	"github.com/taurusgroup/multi-party-sig/pkg/ecdsa"
 	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
@@ -31,17 +36,20 @@ func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
 }
 
 func CMPKeygen(id party.ID, ids party.IDSlice, threshold int, n *test.Network, pl *pool.Pool) (*cmp.Config, error) {
-	h, err := protocol.NewMultiHandler(cmp.Keygen(curve.Secp256k1{}, id, ids, threshold, pl), nil)
+	h, err := protocol.NewMultiHandler(cmp.Keygen(curve.Secp256k1{}, id, ids, threshold, pl), []byte("a"))
 	if err != nil {
 		return nil, err
 	}
+
 	test.HandlerLoop(id, h, n)
 	r, err := h.Result()
 	if err != nil {
 		return nil, err
 	}
 
-	return r.(*cmp.Config), nil
+	config := r.(*cmp.Config)
+
+	return config, nil
 }
 
 func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, error) {
@@ -60,6 +68,7 @@ func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, err
 }
 
 func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool) error {
+	m = ethereumcrypto.Keccak256(m)
 	h, err := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl), nil)
 	if err != nil {
 		return err
@@ -71,6 +80,43 @@ func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl
 		return err
 	}
 	signature := signResult.(*ecdsa.Signature)
+
+	rb, err := signature.R.MarshalBinary()
+
+	if err != nil {
+		return err
+	}
+
+	if err != nil {
+		return err
+	}
+
+	sb, err := signature.S.MarshalBinary()
+
+	if err != nil {
+		return err
+	}
+
+	toECDSA := signature.R.ToECDSA()
+	recoverId := byte(dcrm256k1.Get_ecdsa_sign_v(toECDSA.X, toECDSA.Y))
+
+	sig := append(rb[1:], sb...)
+	sig = append(sig, recoverId)
+
+	// println(len(rb), len(sb), len(sig), len(m), recoverId, "rb len")
+
+	// println(hex.EncodeToString(sig), "sign")
+	if ss, err := ethereumsecp256k1.RecoverPubkey(m, sig); err != nil {
+		return err
+	} else {
+		// bs, _ := c.PublicPoint().MarshalBinary()
+		x, y := elliptic.Unmarshal(ethereumsecp256k1.S256(), ss)
+		pk := cryptoecdsa.PublicKey{Curve: ethereumsecp256k1.S256(), X: x, Y: y}
+
+		pk2 := c.PublicPoint().ToAddress().Hex()
+		println(ethereumcrypto.PubkeyToAddress(pk).Hex(), "public key", pk2)
+	}
+
 	if !signature.Verify(c.PublicPoint(), m) {
 		return errors.New("failed to verify cmp signature")
 	}
@@ -195,9 +241,6 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 
 	// CMP REFRESH
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
-	if err != nil {
-		return err
-	}
 
 	// FROST KEYGEN
 	frostResult, err := FrostKeygen(id, ids, threshold, n)
@@ -251,13 +294,10 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 }
 
 func main() {
-
 	ids := party.IDSlice{"a", "b", "c", "d", "e", "f"}
 	threshold := 4
 	messageToSign := []byte("hello")
-
 	net := test.NewNetwork(ids)
-
 	var wg sync.WaitGroup
 	for _, id := range ids {
 		wg.Add(1)
