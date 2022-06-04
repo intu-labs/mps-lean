@@ -79,6 +79,8 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		return r.AbortRound(errors.New("failed to validate signature")), nil
 	}
 
+	println("round5:", r.SelfID(), "finalized")
+
 	return r.ResultRound(signature), nil
 }
 

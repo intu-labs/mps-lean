@@ -164,6 +164,8 @@ func (r *round2) Finalize(out chan<- *round.Message) (round.Session, error) {
 		ChiShareBetas[j] = m.ChiBeta
 	}
 
+	println("round2:", r.SelfID(), "finalized")
+
 	return &round3{
 		round2:          r,
 		DeltaShareBeta:  DeltaShareBetas,
