@@ -6,8 +6,8 @@ import (
 	"testing/quick"
 
 	"github.com/cronokirby/safenum"
-	"github.com/taurusgroup/multi-party-sig/pkg/hash"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
 )
 
 var testGroup = curve.Secp256k1{}

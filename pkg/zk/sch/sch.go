@@ -4,9 +4,9 @@ import (
 	"crypto/rand"
 	"io"
 
-	"github.com/taurusgroup/multi-party-sig/pkg/hash"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/sample"
+	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
 )
 
 // Randomness = a ← ℤₚ.

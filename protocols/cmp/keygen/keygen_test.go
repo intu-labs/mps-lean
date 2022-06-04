@@ -5,13 +5,13 @@ import (
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/sodiumlabs/multi-party-sig/internal/round"
+	"github.com/sodiumlabs/multi-party-sig/internal/test"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
+	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/taurusgroup/multi-party-sig/internal/round"
-	"github.com/taurusgroup/multi-party-sig/internal/test"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/pool"
-	"github.com/taurusgroup/multi-party-sig/protocols/cmp/config"
 )
 
 var group = curve.Secp256k1{}

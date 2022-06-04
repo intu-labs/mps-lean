@@ -3,8 +3,8 @@ package test
 import (
 	"sync"
 
-	"github.com/taurusgroup/multi-party-sig/pkg/party"
-	"github.com/taurusgroup/multi-party-sig/pkg/protocol"
+	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/protocol"
 )
 
 // Network simulates a point-to-point network between different parties using Go channels.

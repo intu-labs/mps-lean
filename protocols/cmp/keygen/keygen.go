@@ -4,14 +4,14 @@ import (
 	"crypto/rand"
 	"fmt"
 
-	"github.com/taurusgroup/multi-party-sig/internal/round"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/polynomial"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/sample"
-	"github.com/taurusgroup/multi-party-sig/pkg/party"
-	"github.com/taurusgroup/multi-party-sig/pkg/pool"
-	"github.com/taurusgroup/multi-party-sig/pkg/protocol"
-	"github.com/taurusgroup/multi-party-sig/protocols/cmp/config"
+	"github.com/sodiumlabs/multi-party-sig/internal/round"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/polynomial"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
+	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
+	"github.com/sodiumlabs/multi-party-sig/pkg/protocol"
+	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/config"
 )
 
 const Rounds round.Number = 5

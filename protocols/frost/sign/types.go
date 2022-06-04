@@ -3,9 +3,9 @@ package sign
 import (
 	"io"
 
-	"github.com/taurusgroup/multi-party-sig/pkg/hash"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/sample"
+	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
 )
 
 // messageHash is a wrapper around bytes to provide some domain separation.

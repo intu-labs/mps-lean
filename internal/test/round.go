@@ -6,8 +6,8 @@ import (
 	"reflect"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/taurusgroup/multi-party-sig/internal/round"
-	"github.com/taurusgroup/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/internal/round"
+	"github.com/sodiumlabs/multi-party-sig/pkg/party"
 	"golang.org/x/sync/errgroup"
 )
 

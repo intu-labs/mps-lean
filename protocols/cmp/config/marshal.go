@@ -6,11 +6,11 @@ import (
 
 	"github.com/cronokirby/safenum"
 	"github.com/fxamacker/cbor/v2"
-	"github.com/taurusgroup/multi-party-sig/internal/types"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/paillier"
-	"github.com/taurusgroup/multi-party-sig/pkg/party"
-	"github.com/taurusgroup/multi-party-sig/pkg/pedersen"
+	"github.com/sodiumlabs/multi-party-sig/internal/types"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
+	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/pedersen"
 )
 
 // EmptyConfig creates an empty Config with a fixed group, ready for unmarshalling.

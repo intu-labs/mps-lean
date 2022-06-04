@@ -3,12 +3,12 @@ package sign
 import (
 	"errors"
 
-	"github.com/taurusgroup/multi-party-sig/internal/ot"
-	"github.com/taurusgroup/multi-party-sig/internal/round"
-	"github.com/taurusgroup/multi-party-sig/pkg/ecdsa"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/sample"
-	zksch "github.com/taurusgroup/multi-party-sig/pkg/zk/sch"
+	"github.com/sodiumlabs/multi-party-sig/internal/ot"
+	"github.com/sodiumlabs/multi-party-sig/internal/round"
+	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
+	zksch "github.com/sodiumlabs/multi-party-sig/pkg/zk/sch"
 )
 
 // message2R is the last message sent by the Receiver.

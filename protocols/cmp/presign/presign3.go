@@ -5,14 +5,14 @@ import (
 	"fmt"
 
 	"github.com/cronokirby/safenum"
-	"github.com/taurusgroup/multi-party-sig/internal/elgamal"
-	"github.com/taurusgroup/multi-party-sig/internal/round"
-	"github.com/taurusgroup/multi-party-sig/pkg/hash"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/paillier"
-	"github.com/taurusgroup/multi-party-sig/pkg/party"
-	zkaffg "github.com/taurusgroup/multi-party-sig/pkg/zk/affg"
-	zkaffp "github.com/taurusgroup/multi-party-sig/pkg/zk/affp"
+	"github.com/sodiumlabs/multi-party-sig/internal/elgamal"
+	"github.com/sodiumlabs/multi-party-sig/internal/round"
+	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
+	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	zkaffg "github.com/sodiumlabs/multi-party-sig/pkg/zk/affg"
+	zkaffp "github.com/sodiumlabs/multi-party-sig/pkg/zk/affp"
 )
 
 var _ round.Round = (*presign3)(nil)

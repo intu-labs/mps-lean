@@ -1,16 +1,16 @@
 package cmp
 
 import (
-	"github.com/taurusgroup/multi-party-sig/internal/round"
-	"github.com/taurusgroup/multi-party-sig/pkg/ecdsa"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/party"
-	"github.com/taurusgroup/multi-party-sig/pkg/pool"
-	"github.com/taurusgroup/multi-party-sig/pkg/protocol"
-	"github.com/taurusgroup/multi-party-sig/protocols/cmp/config"
-	"github.com/taurusgroup/multi-party-sig/protocols/cmp/keygen"
-	"github.com/taurusgroup/multi-party-sig/protocols/cmp/presign"
-	"github.com/taurusgroup/multi-party-sig/protocols/cmp/sign"
+	"github.com/sodiumlabs/multi-party-sig/internal/round"
+	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
+	"github.com/sodiumlabs/multi-party-sig/pkg/protocol"
+	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/config"
+	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/keygen"
+	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/presign"
+	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/sign"
 )
 
 // Config represents the stored state of a party who participated in a successful `Keygen` protocol.

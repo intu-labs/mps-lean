@@ -3,13 +3,13 @@ package keygen
 import (
 	"crypto/rand"
 
-	"github.com/taurusgroup/multi-party-sig/internal/ot"
-	"github.com/taurusgroup/multi-party-sig/internal/params"
-	"github.com/taurusgroup/multi-party-sig/internal/round"
-	"github.com/taurusgroup/multi-party-sig/pkg/hash"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/sample"
-	zksch "github.com/taurusgroup/multi-party-sig/pkg/zk/sch"
+	"github.com/sodiumlabs/multi-party-sig/internal/ot"
+	"github.com/sodiumlabs/multi-party-sig/internal/params"
+	"github.com/sodiumlabs/multi-party-sig/internal/round"
+	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
+	zksch "github.com/sodiumlabs/multi-party-sig/pkg/zk/sch"
 )
 
 // message1S is the message the Sender provides in response to the first round.

@@ -5,8 +5,8 @@ import (
 	"io"
 
 	"github.com/cronokirby/safenum"
-	"github.com/taurusgroup/multi-party-sig/internal/params"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/sample"
+	"github.com/sodiumlabs/multi-party-sig/internal/params"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
 )
 
 // Ciphertext represents an integer of the for (1+N)ᵐρᴺ (mod N²), representing the encryption of m ∈ ℤₙˣ.

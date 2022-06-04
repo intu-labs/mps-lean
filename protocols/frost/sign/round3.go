@@ -3,10 +3,10 @@ package sign
 import (
 	"fmt"
 
-	"github.com/taurusgroup/multi-party-sig/internal/round"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/party"
-	"github.com/taurusgroup/multi-party-sig/pkg/taproot"
+	"github.com/sodiumlabs/multi-party-sig/internal/round"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/taproot"
 )
 
 // This corresponds with step 7 of Figure 3 in the Frost paper:

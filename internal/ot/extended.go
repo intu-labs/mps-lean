@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/taurusgroup/multi-party-sig/internal/params"
-	"github.com/taurusgroup/multi-party-sig/pkg/hash"
+	"github.com/sodiumlabs/multi-party-sig/internal/params"
+	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
 	"github.com/zeebo/blake3"
 )
 

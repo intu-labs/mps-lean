@@ -6,7 +6,7 @@ import (
 
 	"github.com/cronokirby/safenum"
 	"github.com/fxamacker/cbor/v2"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
 )
 
 // ID represents a unique identifier for a participant in our scheme.

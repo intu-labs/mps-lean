@@ -6,9 +6,9 @@ import (
 	"testing/quick"
 
 	"github.com/cronokirby/safenum"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
+	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
 	"github.com/stretchr/testify/assert"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/sample"
-	"github.com/taurusgroup/multi-party-sig/pkg/pool"
 )
 
 var (

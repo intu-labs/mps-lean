@@ -7,9 +7,9 @@ import (
 	"io"
 
 	"github.com/cronokirby/safenum"
-	"github.com/taurusgroup/multi-party-sig/internal/params"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/arith"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/sample"
+	"github.com/sodiumlabs/multi-party-sig/internal/params"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/arith"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
 )
 
 var (

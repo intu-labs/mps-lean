@@ -1,12 +1,12 @@
 package doerner
 
 import (
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/party"
-	"github.com/taurusgroup/multi-party-sig/pkg/pool"
-	"github.com/taurusgroup/multi-party-sig/pkg/protocol"
-	"github.com/taurusgroup/multi-party-sig/protocols/doerner/keygen"
-	"github.com/taurusgroup/multi-party-sig/protocols/doerner/sign"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
+	"github.com/sodiumlabs/multi-party-sig/pkg/protocol"
+	"github.com/sodiumlabs/multi-party-sig/protocols/doerner/keygen"
+	"github.com/sodiumlabs/multi-party-sig/protocols/doerner/sign"
 )
 
 type (

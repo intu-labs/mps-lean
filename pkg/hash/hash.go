@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"reflect"
 
-	"github.com/taurusgroup/multi-party-sig/internal/params"
+	"github.com/sodiumlabs/multi-party-sig/internal/params"
 	"github.com/zeebo/blake3"
 )
 

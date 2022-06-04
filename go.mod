@@ -1,4 +1,4 @@
-module github.com/taurusgroup/multi-party-sig
+module github.com/sodiumlabs/multi-party-sig
 
 go 1.17
 

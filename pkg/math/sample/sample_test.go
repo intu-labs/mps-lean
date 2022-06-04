@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/cronokirby/safenum"
-	"github.com/taurusgroup/multi-party-sig/internal/params"
-	"github.com/taurusgroup/multi-party-sig/pkg/pool"
+	"github.com/sodiumlabs/multi-party-sig/internal/params"
+	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
 )
 
 func TestModN(t *testing.T) {

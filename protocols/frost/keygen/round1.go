@@ -4,14 +4,14 @@ import (
 	"crypto/rand"
 	"fmt"
 
-	"github.com/taurusgroup/multi-party-sig/internal/round"
-	"github.com/taurusgroup/multi-party-sig/internal/types"
-	"github.com/taurusgroup/multi-party-sig/pkg/hash"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/polynomial"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/sample"
-	"github.com/taurusgroup/multi-party-sig/pkg/party"
-	zksch "github.com/taurusgroup/multi-party-sig/pkg/zk/sch"
+	"github.com/sodiumlabs/multi-party-sig/internal/round"
+	"github.com/sodiumlabs/multi-party-sig/internal/types"
+	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/polynomial"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
+	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	zksch "github.com/sodiumlabs/multi-party-sig/pkg/zk/sch"
 )
 
 // This round corresponds with the steps 1-4 of Round 1, Figure 1 in the Frost paper:

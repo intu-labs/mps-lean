@@ -10,16 +10,16 @@ import (
 	dcrm256k1 "github.com/anyswap/FastMulThreshold-DSA/crypto/secp256k1"
 	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
 	ethereumsecp256k1 "github.com/ethereum/go-ethereum/crypto/secp256k1"
-	"github.com/taurusgroup/multi-party-sig/internal/test"
-	"github.com/taurusgroup/multi-party-sig/pkg/ecdsa"
-	"github.com/taurusgroup/multi-party-sig/pkg/math/curve"
-	"github.com/taurusgroup/multi-party-sig/pkg/party"
-	"github.com/taurusgroup/multi-party-sig/pkg/pool"
-	"github.com/taurusgroup/multi-party-sig/pkg/protocol"
-	"github.com/taurusgroup/multi-party-sig/pkg/taproot"
-	"github.com/taurusgroup/multi-party-sig/protocols/cmp"
-	"github.com/taurusgroup/multi-party-sig/protocols/example"
-	"github.com/taurusgroup/multi-party-sig/protocols/frost"
+	"github.com/sodiumlabs/multi-party-sig/internal/test"
+	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
+	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
+	"github.com/sodiumlabs/multi-party-sig/pkg/protocol"
+	"github.com/sodiumlabs/multi-party-sig/pkg/taproot"
+	"github.com/sodiumlabs/multi-party-sig/protocols/cmp"
+	"github.com/sodiumlabs/multi-party-sig/protocols/example"
+	"github.com/sodiumlabs/multi-party-sig/protocols/frost"
 )
 
 func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
@@ -36,7 +36,7 @@ func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
 }
 
 func CMPKeygen(id party.ID, ids party.IDSlice, threshold int, n *test.Network, pl *pool.Pool) (*cmp.Config, error) {
-	h, err := protocol.NewMultiHandler(cmp.Keygen(curve.Secp256k1{}, id, ids, threshold, pl), []byte("a"))
+	h, err := protocol.NewMultiHandler(cmp.Keygen(curve.Secp256k1{}, id, ids, threshold, pl), nil)
 	if err != nil {
 		return nil, err
 	}
