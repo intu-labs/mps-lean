@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/internal/types"
 	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/types"
 )
 
 // Round2 embeds Round1 so that it has access to previous information.

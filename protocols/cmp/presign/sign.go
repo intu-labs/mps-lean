@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/internal/types"
 	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
 	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
@@ -15,6 +14,7 @@ import (
 	"github.com/sodiumlabs/multi-party-sig/pkg/pedersen"
 	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
 	"github.com/sodiumlabs/multi-party-sig/pkg/protocol"
+	"github.com/sodiumlabs/multi-party-sig/pkg/types"
 	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/config"
 )
 

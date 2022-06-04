@@ -4,8 +4,8 @@ import (
 	"crypto/rand"
 
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/internal/types"
 	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/types"
 )
 
 // Round1 can embed round.Helper which provides useful methods handling messages.

@@ -6,11 +6,11 @@ import (
 	"math"
 	"sync"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/types"
 	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
 	"github.com/sodiumlabs/multi-party-sig/pkg/party"
 	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
+	"github.com/sodiumlabs/multi-party-sig/pkg/types"
 )
 
 // Helper implements Session without Round, and can therefore be embedded in the first round of a protocol

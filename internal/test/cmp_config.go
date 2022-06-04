@@ -3,7 +3,6 @@ package test
 import (
 	"io"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/types"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/polynomial"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
@@ -11,6 +10,7 @@ import (
 	"github.com/sodiumlabs/multi-party-sig/pkg/party"
 	"github.com/sodiumlabs/multi-party-sig/pkg/pedersen"
 	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
+	"github.com/sodiumlabs/multi-party-sig/pkg/types"
 	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/config"
 )
 

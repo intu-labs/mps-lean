@@ -5,7 +5,6 @@ import (
 
 	"github.com/sodiumlabs/multi-party-sig/internal/elgamal"
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/internal/types"
 	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
@@ -13,6 +12,7 @@ import (
 	"github.com/sodiumlabs/multi-party-sig/pkg/party"
 	"github.com/sodiumlabs/multi-party-sig/pkg/pedersen"
 	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
+	"github.com/sodiumlabs/multi-party-sig/pkg/types"
 	zkencelg "github.com/sodiumlabs/multi-party-sig/pkg/zk/encelg"
 )
 

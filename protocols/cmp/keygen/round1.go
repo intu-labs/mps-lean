@@ -6,13 +6,13 @@ import (
 
 	"github.com/cronokirby/safenum"
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/internal/types"
 	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/polynomial"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
 	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
 	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/types"
 	zksch "github.com/sodiumlabs/multi-party-sig/pkg/zk/sch"
 )
 

@@ -4,11 +4,11 @@ import (
 	"errors"
 
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/internal/types"
 	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
 	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
 	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/sodiumlabs/multi-party-sig/pkg/types"
 	zkelog "github.com/sodiumlabs/multi-party-sig/pkg/zk/elog"
 	zklog "github.com/sodiumlabs/multi-party-sig/pkg/zk/log"
 )
