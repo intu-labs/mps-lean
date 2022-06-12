@@ -3,6 +3,7 @@ package sign
 import (
 	"errors"
 
+	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/k0kubun/pp/v3"
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
 	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
@@ -80,7 +81,7 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		S: Sigma,
 	}
 
-	pp.Printf("Sign success %s \n", string(r.Message))
+	pp.Printf("Sign success %s \n", ethereumhexutil.Encode(r.Message))
 
 	if !signature.Verify(r.PublicKey, r.Message) {
 		return r.AbortRound(errors.New("failed to validate signature")), nil

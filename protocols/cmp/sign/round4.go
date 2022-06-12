@@ -3,6 +3,7 @@ package sign
 import (
 	"errors"
 
+	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/k0kubun/pp/v3"
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
@@ -13,9 +14,11 @@ import (
 func init() {
 	// Create a struct describing your scheme
 	scheme := pp.ColorScheme{
-		Integer: pp.Green | pp.Bold,
-		Float:   pp.Black | pp.BackgroundWhite | pp.Bold,
-		String:  pp.Red,
+		Integer:         pp.Green | pp.Bold,
+		Float:           pp.Black | pp.BackgroundWhite | pp.Bold,
+		String:          pp.Red,
+		EscapedChar:     pp.Magenta,
+		StringQuotation: pp.Red | pp.Bold,
 	}
 
 	// Register it for usage
@@ -135,7 +138,7 @@ func (r *round4) Finalize(out chan<- *round.Message) (round.Session, error) {
 		return r, err
 	}
 
-	pp.Printf("Node %s completes signature, content: \"%s\" \n", r.SelfID(), string(r.Message))
+	pp.Printf("Node %s completes signature, content: \"%s\" \n", r.SelfID(), ethereumhexutil.Encode(r.Message))
 
 	return &round5{
 		round4:      r,

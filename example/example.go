@@ -285,7 +285,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 func main() {
 	ids := party.IDSlice{"a", "b", "c", "d", "e", "f"}
 	threshold := 4
-	messageToSign := []byte("hello")
+	messageToSign := []byte("hellohellohello1hellohellohello1")
 	net := test.NewNetwork(ids)
 	var wg sync.WaitGroup
 	for _, id := range ids {
