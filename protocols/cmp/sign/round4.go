@@ -138,7 +138,10 @@ func (r *round4) Finalize(out chan<- *round.Message) (round.Session, error) {
 		return r, err
 	}
 
-	pp.Printf("Node %s completes signature, content: \"%s\" \n", r.SelfID(), ethereumhexutil.Encode(r.Message))
+	b, _ := SigmaShare.MarshalBinary()
+
+	pp.Printf("Node %s complete signature, sign content: %s \nSign result: %s \n", r.SelfID(), ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))
+	pp.Printf("\n")
 
 	return &round5{
 		round4:      r,

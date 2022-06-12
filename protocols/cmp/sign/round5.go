@@ -70,8 +70,10 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	Sigma := r.Group().NewScalar()
 
 	for _, j := range r.PartyIDs() {
+		b, _ := r.SigmaShares[j].MarshalBinary()
+
 		if r.SelfID() == "a" {
-			pp.Printf("Merge signature data, from node %s \n", j)
+			pp.Printf("Merge signature data, from node %s, result %s \n", j, ethereumhexutil.Encode(b))
 		}
 		Sigma.Add(r.SigmaShares[j])
 	}
@@ -81,8 +83,10 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		S: Sigma,
 	}
 
+	b, _ := Sigma.MarshalBinary()
+
 	if r.SelfID() == "a" {
-		pp.Printf("Sign success %s \n", ethereumhexutil.Encode(r.Message))
+		pp.Printf("Sign success %s \nMerged result: %s\n", ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))
 	}
 
 	if !signature.Verify(r.PublicKey, r.Message) {
