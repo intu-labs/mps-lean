@@ -81,7 +81,9 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		S: Sigma,
 	}
 
-	pp.Printf("Sign success %s \n", ethereumhexutil.Encode(r.Message))
+	if r.SelfID() == "a" {
+		pp.Printf("Sign success %s \n", ethereumhexutil.Encode(r.Message))
+	}
 
 	if !signature.Verify(r.PublicKey, r.Message) {
 		return r.AbortRound(errors.New("failed to validate signature")), nil
