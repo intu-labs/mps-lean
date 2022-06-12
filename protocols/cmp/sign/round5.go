@@ -3,6 +3,7 @@ package sign
 import (
 	"errors"
 
+	"github.com/k0kubun/pp/v3"
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
 	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
@@ -66,7 +67,11 @@ func (round5) StoreMessage(round.Message) error { return nil }
 func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	// compute σ = ∑ⱼ σⱼ
 	Sigma := r.Group().NewScalar()
+
 	for _, j := range r.PartyIDs() {
+		if r.SelfID() == "a" {
+			pp.Printf("Merge signature data, from node %s \n", j)
+		}
 		Sigma.Add(r.SigmaShares[j])
 	}
 
@@ -75,11 +80,11 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		S: Sigma,
 	}
 
+	pp.Printf("Sign success %s \n", string(r.Message))
+
 	if !signature.Verify(r.PublicKey, r.Message) {
 		return r.AbortRound(errors.New("failed to validate signature")), nil
 	}
-
-	println("round5:", r.SelfID(), "finalized")
 
 	return r.ResultRound(signature), nil
 }

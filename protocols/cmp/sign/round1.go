@@ -91,8 +91,6 @@ func (r *round1) Finalize(out chan<- *round.Message) (round.Session, error) {
 		}
 	}
 
-	println("round1:", r.SelfID(), "finalized")
-
 	return &round2{
 		round1:        r,
 		K:             map[party.ID]*paillier.Ciphertext{r.SelfID(): K},

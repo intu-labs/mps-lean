@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"sync"
 
-	dcrm256k1 "github.com/anyswap/FastMulThreshold-DSA/crypto/secp256k1"
+	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
 	ethereumsecp256k1 "github.com/ethereum/go-ethereum/crypto/secp256k1"
 	"github.com/sodiumlabs/multi-party-sig/internal/test"
@@ -68,7 +68,6 @@ func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, err
 }
 
 func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool) error {
-	m = ethereumcrypto.Keccak256(m)
 	h, err := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl), nil)
 	if err != nil {
 		return err
@@ -81,29 +80,19 @@ func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl
 	}
 	signature := signResult.(*ecdsa.Signature)
 
-	rb, err := signature.R.MarshalBinary()
-
 	if err != nil {
 		return err
 	}
 
-	if err != nil {
-		return err
-	}
-
-	sb, err := signature.S.MarshalBinary()
+	sig, err := ethereumhexutil.Decode("0xd8d963bf1fd8e09cc7a55d1f5f39c762036017d662b87e58403752078952be5e34a5dbe67b18b2a9fd46c96866a3c0118d092df8219d0f69034dd8949ed8c34a1c")
 
 	if err != nil {
 		return err
 	}
-
-	toECDSA := signature.R.ToECDSA()
-	recoverId := byte(dcrm256k1.Get_ecdsa_sign_v(toECDSA.X, toECDSA.Y))
-
-	sig := append(rb[1:], sb...)
-	sig = append(sig, recoverId)
-
 	// println(len(rb), len(sb), len(sig), len(m), recoverId, "rb len")
+
+	m = []byte("0xc019d8a5f1cbf05267e281484f3ddc2394a6b5eacc14e9d210039cf34d8391fc")
+	sig[64] = sig[64] - 27
 
 	// println(hex.EncodeToString(sig), "sign")
 	if ss, err := ethereumsecp256k1.RecoverPubkey(m, sig); err != nil {

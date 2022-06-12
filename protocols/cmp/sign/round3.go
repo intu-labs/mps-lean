@@ -199,9 +199,6 @@ func (r *round3) Finalize(out chan<- *round.Message) (round.Session, error) {
 			return r, err.(error)
 		}
 	}
-
-	println("round3:", r.SelfID(), "finalized")
-
 	return &round4{
 		round3:         r,
 		DeltaShares:    map[party.ID]curve.Scalar{r.SelfID(): DeltaShareScalar},

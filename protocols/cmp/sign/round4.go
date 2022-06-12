@@ -3,11 +3,24 @@ package sign
 import (
 	"errors"
 
+	"github.com/k0kubun/pp/v3"
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
 	"github.com/sodiumlabs/multi-party-sig/pkg/party"
 	zklogstar "github.com/sodiumlabs/multi-party-sig/pkg/zk/logstar"
 )
+
+func init() {
+	// Create a struct describing your scheme
+	scheme := pp.ColorScheme{
+		Integer: pp.Green | pp.Bold,
+		Float:   pp.Black | pp.BackgroundWhite | pp.Bold,
+		String:  pp.Red,
+	}
+
+	// Register it for usage
+	pp.SetColorScheme(scheme)
+}
 
 var _ round.Round = (*round4)(nil)
 
@@ -122,7 +135,7 @@ func (r *round4) Finalize(out chan<- *round.Message) (round.Session, error) {
 		return r, err
 	}
 
-	println("round4:", r.SelfID(), "finalized")
+	pp.Printf("Node %s completes signature, content: \"%s\" \n", r.SelfID(), string(r.Message))
 
 	return &round5{
 		round4:      r,

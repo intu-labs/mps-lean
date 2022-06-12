@@ -118,7 +118,6 @@ func (r *round2) Finalize(out chan<- *round.Message) (round.Session, error) {
 	}
 	mtaOuts := r.Pool.Parallelize(len(otherIDs), func(i int) interface{} {
 		j := otherIDs[i]
-
 		DeltaBeta, DeltaD, DeltaF, DeltaProof := mta.ProveAffG(r.Group(), r.HashForID(r.SelfID()),
 			r.GammaShare, r.BigGammaShare[r.SelfID()], r.K[j],
 			r.SecretPaillier, r.Paillier[j], r.Pedersen[j])
@@ -163,8 +162,6 @@ func (r *round2) Finalize(out chan<- *round.Message) (round.Session, error) {
 		DeltaShareBetas[j] = m.DeltaBeta
 		ChiShareBetas[j] = m.ChiBeta
 	}
-
-	println("round2:", r.SelfID(), "finalized")
 
 	return &round3{
 		round2:          r,
