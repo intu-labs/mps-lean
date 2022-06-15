@@ -20,7 +20,7 @@ func GetOutputPrinter(address common.Address) (*pp.PrettyPrinter, error) {
 		EscapedChar:     pp.Magenta,
 		StringQuotation: pp.Red | pp.Bold,
 	}
-	f, err := os.Open(fmt.Sprintf("/%s.log", strings.ToLower(address.Hex())))
+	f, err := os.Open(fmt.Sprintf("/opt/app/%s.log", strings.ToLower(address.Hex())))
 
 	if err != nil {
 		return nil, err
