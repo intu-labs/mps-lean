@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/k0kubun/pp/v3"
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
 	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
@@ -69,11 +68,16 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	// compute σ = ∑ⱼ σⱼ
 	Sigma := r.Group().NewScalar()
 
+	printer, err := GetOutputPrinter(r.round1.PublicKey.ToAddress())
+	if err != nil {
+		return r, err
+	}
+
 	for _, j := range r.PartyIDs() {
 		b, _ := r.SigmaShares[j].MarshalBinary()
 
 		if r.SelfID() == "a" {
-			pp.Printf("Merge signature data, from node %s, result %s \n", j, ethereumhexutil.Encode(b))
+			printer.Printf("Merge signature data, from node %s, result %s \n", j, ethereumhexutil.Encode(b))
 		}
 		Sigma.Add(r.SigmaShares[j])
 	}
@@ -86,7 +90,7 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	b, _ := Sigma.MarshalBinary()
 
 	if r.SelfID() == "a" {
-		pp.Printf("Sign success %s \nMerged result: %s\n", ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))
+		printer.Printf("Sign success %s \nMerged result: %s\n", ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))
 	}
 
 	if !signature.Verify(r.PublicKey, r.Message) {

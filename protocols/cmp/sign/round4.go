@@ -4,26 +4,11 @@ import (
 	"errors"
 
 	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/k0kubun/pp/v3"
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
 	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
 	"github.com/sodiumlabs/multi-party-sig/pkg/party"
 	zklogstar "github.com/sodiumlabs/multi-party-sig/pkg/zk/logstar"
 )
-
-func init() {
-	// Create a struct describing your scheme
-	scheme := pp.ColorScheme{
-		Integer:         pp.Green | pp.Bold,
-		Float:           pp.Black | pp.BackgroundWhite | pp.Bold,
-		String:          pp.Red,
-		EscapedChar:     pp.Magenta,
-		StringQuotation: pp.Red | pp.Bold,
-	}
-
-	// Register it for usage
-	pp.SetColorScheme(scheme)
-}
 
 var _ round.Round = (*round4)(nil)
 
@@ -140,8 +125,13 @@ func (r *round4) Finalize(out chan<- *round.Message) (round.Session, error) {
 
 	b, _ := SigmaShare.MarshalBinary()
 
-	pp.Printf("Node %s complete signature, sign content: %s \nSign result: %s \n", r.SelfID(), ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))
-	pp.Printf("\n")
+	printer, err := GetOutputPrinter(r.round1.PublicKey.ToAddress())
+	if err != nil {
+		return r, err
+	}
+
+	printer.Printf("Node %s complete signature, sign content: %s \nSign result: %s \n", r.SelfID(), ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))
+	printer.Printf("\n")
 
 	return &round5{
 		round4:      r,
