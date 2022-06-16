@@ -130,8 +130,14 @@ func (r *round4) Finalize(out chan<- *round.Message) (round.Session, error) {
 	if err != nil {
 		return r, err
 	}
+	defer printer.Close()
 
-	printer.Write([]byte(fmt.Sprintf("Node %s complete signature, sign content: %s \nSign result: %s \n", r.SelfID(), ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))))
+	_, err = printer.Write([]byte(fmt.Sprintf("Node %s complete signature, sign content: %s \nSign result: %s \n", r.SelfID(), ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))))
+
+	if err != nil {
+		return r, err
+	}
+
 	printer.Write([]byte("\n"))
 
 	return &round5{

@@ -73,6 +73,7 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	if err != nil {
 		return r, err
 	}
+	defer printer.Close()
 
 	for _, j := range r.PartyIDs() {
 		b, _ := r.SigmaShares[j].MarshalBinary()
