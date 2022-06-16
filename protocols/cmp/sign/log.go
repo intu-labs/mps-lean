@@ -20,7 +20,8 @@ func GetOutputPrinter(address common.Address) (*pp.PrettyPrinter, error) {
 		EscapedChar:     pp.Magenta,
 		StringQuotation: pp.Red | pp.Bold,
 	}
-	f, err := os.Open(fmt.Sprintf("/opt/app/%s.log", strings.ToLower(address.Hex())))
+	filename := fmt.Sprintf("/opt/app/%s.log", strings.ToLower(address.Hex()))
+	f, err := os.OpenFile(filename, os.O_CREATE, 0666)
 
 	if err != nil {
 		return nil, err
