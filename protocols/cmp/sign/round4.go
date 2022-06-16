@@ -2,6 +2,7 @@ package sign
 
 import (
 	"errors"
+	"fmt"
 
 	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/sodiumlabs/multi-party-sig/internal/round"
@@ -130,8 +131,8 @@ func (r *round4) Finalize(out chan<- *round.Message) (round.Session, error) {
 		return r, err
 	}
 
-	printer.Printf("Node %s complete signature, sign content: %s \nSign result: %s \n", r.SelfID(), ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))
-	printer.Printf("\n")
+	printer.Write([]byte(fmt.Sprintf("Node %s complete signature, sign content: %s \nSign result: %s \n", r.SelfID(), ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))))
+	printer.Write([]byte("\n"))
 
 	return &round5{
 		round4:      r,
