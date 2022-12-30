@@ -1,10 +1,10 @@
 package presign
 
 import (
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/ecdsa"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/round"
 )
 
 var _ round.Round = (*sign1)(nil)

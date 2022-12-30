@@ -2,11 +2,11 @@ package presign
 
 import (
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/internal/elgamal"
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	zklogstar "github.com/sodiumlabs/multi-party-sig/pkg/zk/logstar"
+	"github.com/w3-key/mps-lean/pkg/elgamal"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/round"
+	zklogstar "github.com/w3-key/mps-lean/pkg/zk/logstar"
 )
 
 var _ round.Round = (*presign4)(nil)

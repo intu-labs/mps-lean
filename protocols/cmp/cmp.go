@@ -1,16 +1,16 @@
 package cmp
 
 import (
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
-	"github.com/sodiumlabs/multi-party-sig/pkg/protocol"
-	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/config"
-	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/keygen"
-	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/presign"
-	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/sign"
+	"github.com/w3-key/mps-lean/pkg/ecdsa"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/pool"
+	"github.com/w3-key/mps-lean/pkg/protocol"
+	"github.com/w3-key/mps-lean/pkg/round"
+	"github.com/w3-key/mps-lean/protocols/cmp/config"
+	"github.com/w3-key/mps-lean/protocols/cmp/keygen"
+	"github.com/w3-key/mps-lean/protocols/cmp/presign"
+	"github.com/w3-key/mps-lean/protocols/cmp/sign"
 )
 
 // Config represents the stored state of a party who participated in a successful `Keygen` protocol.

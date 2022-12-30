@@ -3,13 +3,13 @@ package sign
 import (
 	"crypto/rand"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
-	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/pedersen"
-	zkenc "github.com/sodiumlabs/multi-party-sig/pkg/zk/enc"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/sample"
+	"github.com/w3-key/mps-lean/pkg/paillier"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/pedersen"
+	"github.com/w3-key/mps-lean/pkg/round"
+	zkenc "github.com/w3-key/mps-lean/pkg/zk/enc"
 )
 
 var _ round.Round = (*round1)(nil)

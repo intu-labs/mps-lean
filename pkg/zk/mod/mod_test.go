@@ -7,14 +7,14 @@ import (
 
 	"github.com/cronokirby/safenum"
 	"github.com/fxamacker/cbor/v2"
-	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/arith"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
-	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
-	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
-	"github.com/sodiumlabs/multi-party-sig/pkg/zk"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/w3-key/mps-lean/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/math/arith"
+	"github.com/w3-key/mps-lean/pkg/math/sample"
+	"github.com/w3-key/mps-lean/pkg/paillier"
+	"github.com/w3-key/mps-lean/pkg/pool"
+	"github.com/w3-key/mps-lean/pkg/zk"
 )
 
 func TestMod(t *testing.T) {

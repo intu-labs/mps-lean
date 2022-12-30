@@ -3,9 +3,9 @@ package keygen
 import (
 	"errors"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	sch "github.com/sodiumlabs/multi-party-sig/pkg/zk/sch"
-	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/config"
+	"github.com/w3-key/mps-lean/pkg/round"
+	sch "github.com/w3-key/mps-lean/pkg/zk/sch"
+	"github.com/w3-key/mps-lean/protocols/cmp/config"
 )
 
 var _ round.Round = (*round5)(nil)

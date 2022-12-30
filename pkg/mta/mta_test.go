@@ -5,15 +5,15 @@ import (
 	"testing"
 
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
-	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
-	"github.com/sodiumlabs/multi-party-sig/pkg/zk"
-	zkaffg "github.com/sodiumlabs/multi-party-sig/pkg/zk/affg"
-	zkaffp "github.com/sodiumlabs/multi-party-sig/pkg/zk/affp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/w3-key/mps-lean/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/sample"
+	"github.com/w3-key/mps-lean/pkg/paillier"
+	"github.com/w3-key/mps-lean/pkg/zk"
+	zkaffg "github.com/w3-key/mps-lean/pkg/zk/affg"
+	zkaffp "github.com/w3-key/mps-lean/pkg/zk/affp"
 )
 
 func Test_newMtA(t *testing.T) {

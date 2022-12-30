@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
+	"github.com/w3-key/mps-lean/pkg/round"
 )
 
 // TwoPartyHandler represents a restriction of the Handler for 2 party protocols.

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/params"
-	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
-	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
+	"github.com/w3-key/mps-lean/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/params"
+	"github.com/w3-key/mps-lean/pkg/pool"
 )
 
 func runCorreOTSetup(pl *pool.Pool, hash *hash.Hash) (*CorreOTSendSetup, *CorreOTReceiveSetup, error) {

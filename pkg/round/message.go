@@ -1,7 +1,7 @@
 package round
 
 import (
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/party"
 )
 
 // Content represents the message, either broadcast or P2P returned by a round

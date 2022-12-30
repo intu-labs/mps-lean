@@ -2,7 +2,7 @@ package ecdsa
 
 import (
 	dcrm256k1 "github.com/anyswap/FastMulThreshold-DSA/crypto/secp256k1"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
 )
 
 type Signature struct {

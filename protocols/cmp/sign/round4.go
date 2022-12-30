@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	zklogstar "github.com/sodiumlabs/multi-party-sig/pkg/zk/logstar"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/round"
+	zklogstar "github.com/w3-key/mps-lean/pkg/zk/logstar"
 )
 
 var _ round.Round = (*round4)(nil)

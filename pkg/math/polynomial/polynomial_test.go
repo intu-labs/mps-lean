@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/sample"
 )
 
 func TestPolynomial_Constant(t *testing.T) {

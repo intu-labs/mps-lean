@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/party"
 )
 
 // PartyIDs returns a party.IDSlice (sorted) with IDs represented as simple strings.

@@ -4,12 +4,12 @@ import (
 	"errors"
 
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/arith"
-	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	zknth "github.com/sodiumlabs/multi-party-sig/pkg/zk/nth"
+	"github.com/w3-key/mps-lean/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/math/arith"
+	"github.com/w3-key/mps-lean/pkg/paillier"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/round"
+	zknth "github.com/w3-key/mps-lean/pkg/zk/nth"
 )
 
 var _ round.Round = (*abort1)(nil)

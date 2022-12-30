@@ -3,8 +3,8 @@ package polynomial
 import (
 	"crypto/rand"
 
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/sample"
 )
 
 // Polynomial represents f(X) = a₀ + a₁⋅X + … + aₜ⋅Xᵗ.

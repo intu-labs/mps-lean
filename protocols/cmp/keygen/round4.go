@@ -3,16 +3,16 @@ package keygen
 import (
 	"errors"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/polynomial"
-	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/pedersen"
-	"github.com/sodiumlabs/multi-party-sig/pkg/types"
-	zkmod "github.com/sodiumlabs/multi-party-sig/pkg/zk/mod"
-	zkprm "github.com/sodiumlabs/multi-party-sig/pkg/zk/prm"
-	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/config"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/polynomial"
+	"github.com/w3-key/mps-lean/pkg/paillier"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/pedersen"
+	"github.com/w3-key/mps-lean/pkg/round"
+	"github.com/w3-key/mps-lean/pkg/types"
+	zkmod "github.com/w3-key/mps-lean/pkg/zk/mod"
+	zkprm "github.com/w3-key/mps-lean/pkg/zk/prm"
+	"github.com/w3-key/mps-lean/protocols/cmp/config"
 )
 
 var _ round.Round = (*round4)(nil)

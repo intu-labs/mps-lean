@@ -1,6 +1,6 @@
 package round
 
-import "github.com/sodiumlabs/multi-party-sig/pkg/party"
+import "github.com/w3-key/mps-lean/pkg/party"
 
 // Abort is an empty round containing a list of parties who misbehaved.
 type Abort struct {

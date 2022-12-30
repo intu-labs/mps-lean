@@ -2,8 +2,8 @@ package polynomial
 
 import (
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/party"
 )
 
 // Lagrange returns the Lagrange coefficients at 0 for all parties in the interpolation domain.

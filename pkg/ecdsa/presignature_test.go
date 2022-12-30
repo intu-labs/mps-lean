@@ -5,10 +5,10 @@ import (
 	mrand "math/rand"
 	"testing"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/test"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/sample"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/test"
 )
 
 func generateShares(secret curve.Scalar, ids []party.ID) map[party.ID]curve.Scalar {

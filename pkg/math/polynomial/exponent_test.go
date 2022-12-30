@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/sample"
 )
 
 func TestExponent_Evaluate(t *testing.T) {

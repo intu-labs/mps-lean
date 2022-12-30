@@ -4,11 +4,11 @@ import (
 	"crypto/rand"
 	"testing"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/params"
-	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
-	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
+	"github.com/w3-key/mps-lean/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/sample"
+	"github.com/w3-key/mps-lean/pkg/params"
+	"github.com/w3-key/mps-lean/pkg/pool"
 )
 
 func runAdditiveOT(hash *hash.Hash, choices []byte, alpha [2]curve.Scalar, sendSetup *CorreOTSendSetup, receiveSetup *CorreOTReceiveSetup) (AdditiveOTSendResult, AdditiveOTReceiveResult, error) {

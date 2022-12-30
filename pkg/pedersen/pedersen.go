@@ -5,8 +5,8 @@ import (
 	"io"
 
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/internal/params"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/arith"
+	"github.com/w3-key/mps-lean/pkg/math/arith"
+	"github.com/w3-key/mps-lean/pkg/params"
 )
 
 type Error string

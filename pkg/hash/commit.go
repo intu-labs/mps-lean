@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/params"
+	"github.com/w3-key/mps-lean/pkg/params"
 )
 
 type (

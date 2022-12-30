@@ -10,14 +10,14 @@ import (
 	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
 	ethereumsecp256k1 "github.com/ethereum/go-ethereum/crypto/secp256k1"
-	"github.com/sodiumlabs/multi-party-sig/internal/test"
-	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
-	"github.com/sodiumlabs/multi-party-sig/pkg/protocol"
-	"github.com/sodiumlabs/multi-party-sig/protocols/cmp"
-	"github.com/sodiumlabs/multi-party-sig/protocols/example"
+	"github.com/w3-key/mps-lean/pkg/ecdsa"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/pool"
+	"github.com/w3-key/mps-lean/pkg/protocol"
+	"github.com/w3-key/mps-lean/pkg/test"
+	"github.com/w3-key/mps-lean/protocols/cmp"
+	"github.com/w3-key/mps-lean/protocols/example"
 )
 
 func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {

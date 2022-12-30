@@ -4,17 +4,17 @@ import (
 	"errors"
 
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/internal/elgamal"
-	"github.com/sodiumlabs/multi-party-sig/internal/mta"
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/types"
-	zkaffg "github.com/sodiumlabs/multi-party-sig/pkg/zk/affg"
-	zkaffp "github.com/sodiumlabs/multi-party-sig/pkg/zk/affp"
-	zkencelg "github.com/sodiumlabs/multi-party-sig/pkg/zk/encelg"
+	"github.com/w3-key/mps-lean/pkg/elgamal"
+	"github.com/w3-key/mps-lean/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/mta"
+	"github.com/w3-key/mps-lean/pkg/paillier"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/round"
+	"github.com/w3-key/mps-lean/pkg/types"
+	zkaffg "github.com/w3-key/mps-lean/pkg/zk/affg"
+	zkaffp "github.com/w3-key/mps-lean/pkg/zk/affp"
+	zkencelg "github.com/w3-key/mps-lean/pkg/zk/encelg"
 )
 
 var _ round.Round = (*presign2)(nil)

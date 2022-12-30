@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"reflect"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/params"
+	"github.com/w3-key/mps-lean/pkg/params"
 	"github.com/zeebo/blake3"
 )
 

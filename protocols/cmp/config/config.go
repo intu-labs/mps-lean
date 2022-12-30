@@ -6,14 +6,14 @@ import (
 	"io"
 	"math"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/bip32"
-	"github.com/sodiumlabs/multi-party-sig/internal/params"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/polynomial"
-	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/pedersen"
-	"github.com/sodiumlabs/multi-party-sig/pkg/types"
+	"github.com/w3-key/mps-lean/pkg/bip32"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/polynomial"
+	"github.com/w3-key/mps-lean/pkg/paillier"
+	"github.com/w3-key/mps-lean/pkg/params"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/pedersen"
+	"github.com/w3-key/mps-lean/pkg/types"
 )
 
 // Config contains all necessary cryptographic keys necessary to generate a signature.

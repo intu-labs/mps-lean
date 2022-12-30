@@ -3,9 +3,9 @@ package xor
 import (
 	"errors"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/types"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/round"
+	"github.com/w3-key/mps-lean/pkg/types"
 )
 
 // Round2 embeds Round1 so that it has access to previous information.

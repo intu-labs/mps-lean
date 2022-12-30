@@ -6,11 +6,11 @@ import (
 	"math"
 	"sync"
 
-	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
-	"github.com/sodiumlabs/multi-party-sig/pkg/types"
+	"github.com/w3-key/mps-lean/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/pool"
+	"github.com/w3-key/mps-lean/pkg/types"
 )
 
 // Helper implements Session without Round, and can therefore be embedded in the first round of a protocol

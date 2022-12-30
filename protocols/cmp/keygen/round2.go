@@ -2,14 +2,14 @@ package keygen
 
 import (
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/polynomial"
-	"github.com/sodiumlabs/multi-party-sig/pkg/paillier"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/types"
-	zksch "github.com/sodiumlabs/multi-party-sig/pkg/zk/sch"
+	"github.com/w3-key/mps-lean/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/polynomial"
+	"github.com/w3-key/mps-lean/pkg/paillier"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/round"
+	"github.com/w3-key/mps-lean/pkg/types"
+	zksch "github.com/w3-key/mps-lean/pkg/zk/sch"
 )
 
 var _ round.Round = (*round2)(nil)

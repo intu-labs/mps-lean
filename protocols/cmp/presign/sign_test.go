@@ -5,15 +5,15 @@ import (
 	"testing"
 
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/internal/test"
-	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/pool"
-	"github.com/sodiumlabs/multi-party-sig/protocols/cmp/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/w3-key/mps-lean/pkg/ecdsa"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/pool"
+	"github.com/w3-key/mps-lean/pkg/round"
+	"github.com/w3-key/mps-lean/pkg/test"
+	"github.com/w3-key/mps-lean/protocols/cmp/config"
 	"golang.org/x/crypto/sha3"
 )
 

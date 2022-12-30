@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/params"
-	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/params"
 	"github.com/zeebo/blake3"
 )
 

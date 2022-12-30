@@ -3,14 +3,14 @@ package presign
 import (
 	"errors"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/ecdsa"
-	"github.com/sodiumlabs/multi-party-sig/pkg/hash"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/types"
-	zkelog "github.com/sodiumlabs/multi-party-sig/pkg/zk/elog"
-	zklog "github.com/sodiumlabs/multi-party-sig/pkg/zk/log"
+	"github.com/w3-key/mps-lean/pkg/ecdsa"
+	"github.com/w3-key/mps-lean/pkg/hash"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/round"
+	"github.com/w3-key/mps-lean/pkg/types"
+	zkelog "github.com/w3-key/mps-lean/pkg/zk/elog"
+	zklog "github.com/w3-key/mps-lean/pkg/zk/log"
 )
 
 var _ round.Round = (*presign7)(nil)

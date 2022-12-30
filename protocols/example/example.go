@@ -3,10 +3,10 @@ package example
 import (
 	"fmt"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	"github.com/sodiumlabs/multi-party-sig/pkg/protocol"
-	"github.com/sodiumlabs/multi-party-sig/protocols/example/xor"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/protocol"
+	"github.com/w3-key/mps-lean/pkg/round"
+	"github.com/w3-key/mps-lean/protocols/example/xor"
 )
 
 const (

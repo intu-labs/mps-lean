@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/internal/test"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/polynomial"
 	"github.com/stretchr/testify/assert"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/polynomial"
+	"github.com/w3-key/mps-lean/pkg/test"
 )
 
 func TestLagrange(t *testing.T) {

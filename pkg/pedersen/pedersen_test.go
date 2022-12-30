@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/cronokirby/safenum"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/arith"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/sample"
+	"github.com/w3-key/mps-lean/pkg/math/arith"
+	"github.com/w3-key/mps-lean/pkg/math/sample"
 )
 
 var benchParams *Parameters

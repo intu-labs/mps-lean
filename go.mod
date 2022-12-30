@@ -1,4 +1,4 @@
-module github.com/sodiumlabs/multi-party-sig
+module github.com/w3-key/mps-lean
 
 go 1.17
 

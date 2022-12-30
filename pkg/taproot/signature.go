@@ -8,7 +8,7 @@ import (
 	"io"
 	"sync/atomic"
 
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
 )
 
 // TaggedHash addes some domain separation to SHA-256.

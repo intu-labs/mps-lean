@@ -3,11 +3,11 @@ package presign
 import (
 	"errors"
 
-	"github.com/sodiumlabs/multi-party-sig/internal/round"
-	"github.com/sodiumlabs/multi-party-sig/pkg/math/curve"
-	"github.com/sodiumlabs/multi-party-sig/pkg/party"
-	zkelog "github.com/sodiumlabs/multi-party-sig/pkg/zk/elog"
-	zklogstar "github.com/sodiumlabs/multi-party-sig/pkg/zk/logstar"
+	"github.com/w3-key/mps-lean/pkg/math/curve"
+	"github.com/w3-key/mps-lean/pkg/party"
+	"github.com/w3-key/mps-lean/pkg/round"
+	zkelog "github.com/w3-key/mps-lean/pkg/zk/elog"
+	zklogstar "github.com/w3-key/mps-lean/pkg/zk/logstar"
 )
 
 var _ round.Round = (*presign5)(nil)
