@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/cronokirby/safenum"
-	"github.com/w3-key/mps-lean/multi-party-sig/pkg/paillier"
-	"github.com/w3-key/mps-lean/multi-party-sig/pkg/pedersen"
-	"github.com/w3-key/mps-lean/multi-party-sig/pkg/pool"
+	"github.com/w3-key/mps-lean/pkg/paillier"
+	"github.com/w3-key/mps-lean/pkg/pedersen"
+	"github.com/w3-key/mps-lean/pkg/pool"
 )
 
 var (
