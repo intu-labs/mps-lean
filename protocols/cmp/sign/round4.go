@@ -2,9 +2,7 @@ package sign
 
 import (
 	"errors"
-	"fmt"
 
-	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 	"github.com/w3-key/mps-lean/pkg/party"
 	"github.com/w3-key/mps-lean/pkg/round"
@@ -124,21 +122,19 @@ func (r *round4) Finalize(out chan<- *round.Message) (round.Session, error) {
 		return r, err
 	}
 
-	b, _ := SigmaShare.MarshalBinary()
+	//todo collect all sigmashares and return them for each party
 
-	printer, err := GetOutputPrinter(r.round1.PublicKey.ToAddress())
-	if err != nil {
-		return r, err
-	}
-	defer printer.Close()
-
-	_, err = printer.Write([]byte(fmt.Sprintf("Node %s complete signature, sign content: %s \nSign result: %s \n", r.SelfID(), ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))))
-
-	if err != nil {
-		return r, err
-	}
-
-	printer.Write([]byte("\n"))
+	//b, _ := SigmaShare.MarshalBinary()
+	//printer, err := GetOutputPrinter(r.round1.PublicKey.ToAddress())
+	//if err != nil {
+	//	return r, err
+	//}
+	//defer printer.Close()
+	//_, err = printer.Write([]byte(fmt.Sprintf("Node %s complete signature, sign content: %s \nSign result: %s \n", r.SelfID(), ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))))
+	//if err != nil {
+	//	return r, err
+	//}
+	//printer.Write([]byte("\n"))
 
 	return &round5{
 		round4:      r,

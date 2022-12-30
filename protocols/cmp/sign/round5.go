@@ -2,9 +2,7 @@ package sign
 
 import (
 	"errors"
-	"fmt"
 
-	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/w3-key/mps-lean/pkg/ecdsa"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 	"github.com/w3-key/mps-lean/pkg/party"
@@ -69,19 +67,19 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	// compute σ = ∑ⱼ σⱼ
 	Sigma := r.Group().NewScalar()
 
-	printer, err := GetOutputPrinter(r.round1.PublicKey.ToAddress())
-	if err != nil {
-		return r, err
-	}
-	defer printer.Close()
+	//printer, err := GetOutputPrinter(r.round1.PublicKey.ToAddress())
+	//if err != nil {
+	//	return r, err
+	//}
+	//defer printer.Close()
 
 	for _, j := range r.PartyIDs() {
-		b, _ := r.SigmaShares[j].MarshalBinary()
-
-		if r.SelfID() == "a" {
-			printer.Write([]byte(fmt.Sprintf("Merge signature data, from node %s, result %s \n", j, ethereumhexutil.Encode(b))))
-		}
 		Sigma.Add(r.SigmaShares[j])
+
+		//b, _ := r.SigmaShares[j].MarshalBinary()
+		//if r.SelfID() == "a" {
+		//	printer.Write([]byte(fmt.Sprintf("Merge signature data, from node %s, result %s \n", j, ethereumhexutil.Encode(b))))
+		//}
 	}
 
 	signature := &ecdsa.Signature{
@@ -89,11 +87,11 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		S: Sigma,
 	}
 
-	b, _ := Sigma.MarshalBinary()
+	//b, _ := Sigma.MarshalBinary()
 
-	if r.SelfID() == "a" {
-		printer.Write([]byte(fmt.Sprintf("Sign success %s \nMerged result: %s\n", ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))))
-	}
+	//if r.SelfID() == "a" {
+	//	printer.Write([]byte(fmt.Sprintf("Sign success %s \nMerged result: %s\n", ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))))
+	//}
 
 	if !signature.Verify(r.PublicKey, r.Message) {
 		return r.AbortRound(errors.New("failed to validate signature")), nil
