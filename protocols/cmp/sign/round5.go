@@ -2,9 +2,7 @@ package sign
 
 import (
 	"errors"
-	"fmt"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/w3-key/mps-lean/pkg/ecdsa"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 	"github.com/w3-key/mps-lean/pkg/party"
@@ -34,8 +32,21 @@ type round5 struct {
 
 	ChiShare curve.Scalar
 
-	KSHare curve.Scalar
+	KShare curve.Scalar
 }
+
+type signatureParts struct {
+	GroupDelta curve.Scalar
+
+	GroupBigDelta curve.Point
+
+	GroupKShare curve.Scalar
+
+	GroupBigR curve.Point
+
+	GroupChiShare curve.Scalar
+}
+
 
 type broadcast5 struct {
 	round.NormalBroadcastContent
@@ -87,12 +98,18 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		//	printer.Write([]byte(fmt.Sprintf("Merge signature data, from node %s, result %s \n", j, ethereumhexutil.Encode(b))))
 		//}
 	}
-	fmt.Println("round5")
-	spew.Dump(r.Delta)
 
 	signature := &ecdsa.Signature{
 		R: r.BigR,
 		S: Sigma,
+	}
+
+	signatureParts := signatureParts{
+		r.Delta,
+		r.BigDelta,
+		r.KShare,
+		r.BigR,
+		r.ChiShare,
 	}
 
 	//b, _ := Sigma.MarshalBinary()
@@ -107,7 +124,7 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	}
 //	return r.ResultRound(signature, r.Delta, r.BigDelta, r.KShare, r.BigR, r.ChiShare,), nil
 
-	return r.ResultRound(signature,), nil
+	return r.ResultRound(signatureParts,), nil
 }
 
 // MessageContent implements round.Round.

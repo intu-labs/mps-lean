@@ -6,11 +6,10 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/davecgh/go-spew/spew"
 	_ "github.com/davecgh/go-spew/spew"
-	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/w3-key/mps-lean/pkg/ecdsa"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 	"github.com/w3-key/mps-lean/pkg/party"
 	"github.com/w3-key/mps-lean/pkg/pool"
@@ -20,6 +19,18 @@ import (
 	_ "github.com/w3-key/mps-lean/protocols/cmp/config"
 	"github.com/w3-key/mps-lean/protocols/example"
 )
+
+type signatureParts struct {
+	GroupDelta curve.Scalar
+
+	GroupBigDelta curve.Point
+
+	GroupKShare curve.Scalar
+
+	GroupBigR curve.Point
+
+	GroupChiShare curve.Scalar
+}
 
 func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
 	h, err := protocol.NewMultiHandler(example.StartXOR(id, ids), nil)
@@ -66,36 +77,25 @@ func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, err
 	return r.(*cmp.Config), nil
 }
 
-func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool) (*ecdsa.Signature, error) {
+func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool) (string, error) {
 //	func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool) (*ecdsa.Signature, curve.Scalar, curve.Point, curve.Scalar,curve.Point, curve.Scalar, error) {
 
-	h, err := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl), nil)
-	if err != nil {
-		return nil, err
-	}
+	h, _ := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl), nil)
 	test.HandlerLoop(c.ID, h, n)
 
-	signResult, err := h.Result()
-	if err != nil {
-		return nil, err
-	}
-	//spew.Dump(signResult)
-	signature := signResult.(*ecdsa.Signature)
+	signResult, _ := h.Result()
 
-	if err != nil {
-		return nil, err
-	}
-
-	sig, err := ethereumhexutil.Decode("0xd8d963bf1fd8e09cc7a55d1f5f39c762036017d662b87e58403752078952be5e34a5dbe67b18b2a9fd46c96866a3c0118d092df8219d0f69034dd8949ed8c34a1c")
-
-	if err != nil {
-		return nil, err
-	}
-	// println(len(rb), len(sb), len(sig), len(m), recoverId, "rb len")
-	fmt.Println("asdf")
-
-	m = []byte("0xc019d8a5f1cbf05267e281484f3ddc2394a6b5eacc14e9d210039cf34d8391fc")
-	sig[64] = sig[64] - 27
+	spew.Dump(signResult)
+	//signature := signResult.(*ecdsa.Signature)
+//
+//
+	//sig, err := ethereumhexutil.Decode("0xd8d963bf1fd8e09cc7a55d1f5f39c762036017d662b87e58403752078952be5e34a5dbe67b18b2a9fd46c96866a3c0118d092df8219d0f69034dd8949ed8c34a1c")
+//
+	//// println(len(rb), len(sb), len(sig), len(m), recoverId, "rb len")
+	//fmt.Println("asdf")
+//
+	//m = []byte("0xc019d8a5f1cbf05267e281484f3ddc2394a6b5eacc14e9d210039cf34d8391fc")
+	//sig[64] = sig[64] - 27
 
 	// println(hex.EncodeToString(sig), "sign")
 	//if ss, err := ethereumsecp256k1.RecoverPubkey(m, sig); err != nil {
@@ -112,8 +112,8 @@ func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl
 	//if !signature.Verify(c.PublicPoint(), m) {
 	//	return nil, errors.New("failed to verify cmp signature");
 	//}
-	fmt.Println("asdf")
-	return signature, err
+	return "asdf",nil
+	//return signResult, err
 	//return signature, delta, bigdelta, kshare, bigr, chishares, nil;
 }
 
