@@ -29,12 +29,22 @@ type round5 struct {
 
 	// R = R|ₓ
 	R curve.Scalar
+
+	ChiShare curve.Scalar
 }
 
 type broadcast5 struct {
 	round.NormalBroadcastContent
 	SigmaShare curve.Scalar
 }
+
+type signatureParts struct {
+	GroupDelta curve.Scalar
+	GroupBigDelta curve.Point
+	GroupKShare curve.Scalar
+	GroupBigR curve.Point
+	GroupChiShare curve.Scalar
+	}
 
 // StoreBroadcastMessage implements round.BroadcastRound.
 //
@@ -85,6 +95,14 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	signature := &ecdsa.Signature{
 		R: r.BigR,
 		S: Sigma,
+	}
+
+	signatureParts := signatureParts{
+		r.Delta,
+		r.BigDelta,
+		r.KShare,
+		r.BigR,
+		r.ChiShare,
 	}
 
 	//b, _ := Sigma.MarshalBinary()
