@@ -39,14 +39,6 @@ type broadcast5 struct {
 	SigmaShare curve.Scalar
 }
 
-type signatureParts struct {
-	GroupDelta curve.Scalar
-	GroupBigDelta curve.Point
-	GroupKShare curve.Scalar
-	GroupBigR curve.Point
-	GroupChiShare curve.Scalar
-	}
-
 // StoreBroadcastMessage implements round.BroadcastRound.
 //
 // - save σⱼ
@@ -98,7 +90,7 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		S: Sigma,
 	}
 
-	signatureParts := &signatureParts{
+	signatureParts := signatureParts{
 		r.Delta,
 		r.BigDelta,
 		r.KShare,
