@@ -4,33 +4,33 @@
 
 A Go implementation of multi-party threshold signing for:
 
-- ECDSA, using the "CGGMP" protocol by [Canetti et al.](https://eprint.iacr.org/2021/060) for threshold ECDSA signing.
-  We implement both the 4 round "online" and the 7 round "presigning" protocols from the paper. The latter also supports identifiable aborts.
-  Implementation details are also documented in in [docs/Threshold.pdf](docs/Threshold.pdf).
-  Our implementation supports ECDSA with secp256k1, with other curves coming in the future.
-  <!-- including  with some additions to improve its practical reliability, including the "echo broadcast" from [Goldwasser and Lindell](https://doi.org/10.1007/s00145-005-0319-z).  -->
+-   ECDSA, using the "CGGMP" protocol by [Canetti et al.](https://eprint.iacr.org/2021/060) for threshold ECDSA signing.
+    We implement both the 4 round "online" and the 7 round "presigning" protocols from the paper. The latter also supports identifiable aborts.
+    Implementation details are also documented in in [docs/Threshold.pdf](docs/Threshold.pdf).
+    Our implementation supports ECDSA with secp256k1, with other curves coming in the future.
+    <!-- including  with some additions to improve its practical reliability, including the "echo broadcast" from [Goldwasser and Lindell](https://doi.org/10.1007/s00145-005-0319-z).  -->
 
-- Schnorr signatures (as integrated in Bitcoin's Taproot), using the
-  [FROST](https://eprint.iacr.org/2020/852.pdf) protocol. Because of the linear structure
-  of Schnorr signatures, this protocol is less expensive than CMP. We've also
-  made the necessary adjustments to make our signatures compatible with
-  Taproot's specific point encoding, as specified in [BIP-0340](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki).
+-   Schnorr signatures (as integrated in Bitcoin's Taproot), using the
+    [FROST](https://eprint.iacr.org/2020/852.pdf) protocol. Because of the linear structure
+    of Schnorr signatures, this protocol is less expensive than CMP. We've also
+    made the necessary adjustments to make our signatures compatible with
+    Taproot's specific point encoding, as specified in [BIP-0340](https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki).
 
 > DISCLAIMER: Use at your own risk, this project needs further testing and auditing to be production-ready.
 
 ## Features
 
-- **[BIP-32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) key derivation**.
-  Parties can convert their shares of a public key into shares of a child key,
-  as per BIP-32's key derivation spec. Only unhardened derivation is supported,
-  since hardened derivation would require hashing the secret key, which no party
-  has access to.
-- **Constant-time arithmetic**, via [safenum](https://github.com/cronokirby/safenum).
-  The CMP protocol requires Paillier encryption, as well as related ZK proofs
-  performing modular arithmetic. We use a constant-time implementation of this
-  arithmetic to mitigate timing-leaks
-- **Parallel processing.** When possible, we parallelize heavy computation to speed
-  up protocol execution.
+-   **[BIP-32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) key derivation**.
+    Parties can convert their shares of a public key into shares of a child key,
+    as per BIP-32's key derivation spec. Only unhardened derivation is supported,
+    since hardened derivation would require hashing the secret key, which no party
+    has access to.
+-   **Constant-time arithmetic**, via [safenum](https://github.com/cronokirby/safenum).
+    The CMP protocol requires Paillier encryption, as well as related ZK proofs
+    performing modular arithmetic. We use a constant-time implementation of this
+    arithmetic to mitigate timing-leaks
+-   **Parallel processing.** When possible, we parallelize heavy computation to speed
+    up protocol execution.
 
 ## Usage
 
@@ -55,13 +55,13 @@ Each protocol can be invoked using one of the following functions:
 In general, `Keygen` and `Refresh` protocols return a `Config` struct which contains a single key share, as well as the other participants' public key shares, and the full signing public key.
 The remaining arguments should be chosen as follows:
 
-- [`party.ID`](pkg/party/id.go) aliases a string and should uniquely identify each participant in the protocol.
-- [`curve.Curve`](pkg/math/curve/curve.go) represents the cryptogrpahic group over which the protocol is defined. Currently, the only option is [`curve.Secp256k1`](pkg/math/curve/secp256k1.go).
-- [`*pool.Pool`](pkg/pool/pool.go) can be used to paralelize certain operations during the protocol execution. This parameter may be nil, in which case the protocol will be run over a single thread.
-  A new `pool.Pool` can be created with `pl := pool.NewPool(numberOfThreads)`, and should be freed once the protocol has finished executing by calling `pl.Teardown()`.
-- `threshold` defines the maximum number of participants which may be corrupted at any given time. Generating a signature therefore requires `threshold+1` participants.
-- [`*ecdsa.PreSignature`](pkg/ecdsa/presignature.go) represents a preprocessed signature share which can be generated before the message to be signed is known.
-  When the message does become available, the signature can be generated in a single round.
+-   [`party.ID`](pkg/party/id.go) aliases a string and should uniquely identify each participant in the protocol.
+-   [`curve.Curve`](pkg/math/curve/curve.go) represents the cryptogrpahic group over which the protocol is defined. Currently, the only option is [`curve.Secp256k1`](pkg/math/curve/secp256k1.go).
+-   [`*pool.Pool`](pkg/pool/pool.go) can be used to paralelize certain operations during the protocol execution. This parameter may be nil, in which case the protocol will be run over a single thread.
+    A new `pool.Pool` can be created with `pl := pool.NewPool(numberOfThreads)`, and should be freed once the protocol has finished executing by calling `pl.Teardown()`.
+-   `threshold` defines the maximum number of participants which may be corrupted at any given time. Generating a signature therefore requires `threshold+1` participants.
+-   [`*ecdsa.PreSignature`](pkg/ecdsa/presignature.go) represents a preprocessed signature share which can be generated before the message to be signed is known.
+    When the message does become available, the signature can be generated in a single round.
 
 Each of the above protocols can be executed by creating a [`protocol.Handler`](pkg/protocol/handler.go) object.
 For example, we can generate a new ECDSA key as follows:
