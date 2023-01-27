@@ -22,7 +22,7 @@ const (
 	protocolSignRounds round.Number = 5
 )
 
-func StartSign(config *config.Config, signers []party.ID, message []byte, pl *pool.Pool) protocol.StartFunc {
+func StartSign(config *config.Config, signers []party.ID, message []byte, pl *pool.Pool, forkeys bool) protocol.StartFunc {
 	return func(sessionID []byte) (round.Session, error) {
 		group := config.Group
 
@@ -38,6 +38,7 @@ func StartSign(config *config.Config, signers []party.ID, message []byte, pl *po
 			PartyIDs:         signers,
 			Threshold:        config.Threshold,
 			Group:            config.Group,
+			JustInfo:         forkeys,
 		}
 
 		helper, err := round.NewSession(info, sessionID, pl, config, types.SigningMessage(message))
@@ -76,6 +77,7 @@ func StartSign(config *config.Config, signers []party.ID, message []byte, pl *po
 			Pedersen:       Pedersen,
 			ECDSA:          ECDSA,
 			Message:        message,
+			JustInfo:       forkeys,
 		}, nil
 	}
 }

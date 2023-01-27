@@ -114,8 +114,11 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	if !signature.Verify(r.PublicKey, r.Message) {
 		return r.AbortRound(errors.New("failed to validate signature")), nil
 	}
-
-	return r.ResultRound(signature), nil
+	if (r.JustInfo) {
+		return r.ResultRound(signatureParts), nil
+	} else {
+	  return r.ResultRound(signature), nil
+	}
 }
 
 // MessageContent implements round.Round.

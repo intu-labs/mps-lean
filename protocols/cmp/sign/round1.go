@@ -24,8 +24,8 @@ type round1 struct {
 	Paillier       map[party.ID]*paillier.PublicKey
 	Pedersen       map[party.ID]*pedersen.Parameters
 	ECDSA          map[party.ID]curve.Point
-
 	Message []byte
+	JustInfo      bool
 }
 
 // VerifyMessage implements round.Round.
