@@ -73,6 +73,102 @@ func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, err
 	return r.(*cmp.Config), nil
 }
 
+func SingleSign(specialconfig *config.Config, message []byte) (signresult curve.Scalar) {
+	group := specialconfig.Group
+	Delta = specialconfig.GroupDelta
+	BigDelta = specialconfig.GroupBigDelta
+	//GammaShare, BigGammaShare := sample.ScalarPointPair(rand.Reader, group)
+	//GShare := specialconfig.MakeInt(GammaShare)
+  KShare := specialconfig.GroupKShare
+  KShareInt := curve.MakeInt(KShare)
+	//Gamma := group.NewPoint()
+	//Gamma = Gamma.Add(BigGammaShare)
+	deltaComputed := Delta.ActOnBase()
+	if !deltaComputed.Equal(BigDelta) {
+		fmt.Println("computed Δ is inconsistent with [δ]G")
+	}
+	deltaInv := group.NewScalar().Set(Delta).Invert() // δ⁻¹
+  
+  BigR := config.BigR                        // R = [δ⁻¹] Γ
+	R := BigR.XScalar()                        // r = R|ₓ
+	km := curve.FromHash(group, message)
+	km.Mul(KShare)
+	SigmaShare := group.NewScalar().Set(R).Mul(specialconfig.ChiShare).Add(km)
+	return SigmaShare;
+}
+
+func CombineSignatures(SigmaShares []string, specialConfig *config.Config) (signature ecdsa.Signature) {
+	for _, j := range SigmaShares.length{
+		Sigma.Add(SigmaShares[j])
+	}
+		signature := &ecdsa.Signature{
+			R: BigR,
+			S: SigmaShare,
+		}
+		return signature;
+}
+
+	func SingleSign(config *config.Config, message []byte) (signresult curve.Scalar) {
+		group := config.Group
+		//cheatr := config
+		//c := config
+		Delta := group.NewScalar()
+		BigDelta := group.NewPoint()
+		GammaShare, BigGammaShare := sample.ScalarPointPair(rand.Reader, group)
+		GShare := curve.MakeInt(GammaShare)
+		KShare := sample.Scalar(rand.Reader, group)
+		KShareInt := curve.MakeInt(KShare)
+		DeltaShareStart := new(safenum.Int).Mul(GShare, KShareInt, -1)
+		DeltaShare := group.NewScalar().SetNat(DeltaShareStart.Mod(group.Order()))
+		Gamma := group.NewPoint()
+		Gamma = Gamma.Add(BigGammaShare)
+		BigDeltaShare := KShare.Act(Gamma)
+		Delta.Add(DeltaShare)
+		BigDelta = BigDelta.Add(BigDeltaShare)
+		deltaComputed := Delta.ActOnBase()
+		if !deltaComputed.Equal(BigDelta) {
+			fmt.Println("computed Δ is inconsistent with [δ]G")
+		}
+		deltaInv := group.NewScalar().Set(Delta).Invert() // δ⁻¹
+		
+		BigR := deltaInv.Act(Gamma)                         // R = [δ⁻¹] Γ
+		R := BigR.XScalar()                                   // r = R|ₓ
+		//fmt.Println(R)
+		km := curve.FromHash(group, message)
+		km.Mul(KShare)
+		fmt.Println("4")
+	
+		//just need signers
+		//lagrange := polynomial.Lagrange(group, signers)
+		//SecretECDSA := group.NewScalar().Set(lagrange).Mul(config.ECDSA)
+	
+		SecretECDSA := config.ECDSA
+	
+		ChiS := new(safenum.Int).Mul(curve.MakeInt(SecretECDSA), KShareInt, -1)
+		ChiShare := group.NewScalar().SetNat(ChiS.Mod(group.Order()))
+		//// why this might not work, things like ChiShare and DeltaShare are created from the range of other party ID shares of their alpha deltas etc
+		SigmaShare := group.NewScalar().Set(R).Mul(ChiShare).Add(km)
+		fmt.Println("5")
+		//fmt.Println(SigmaShare)
+		messageToSign := []byte("hello")
+		messageHash := make([]byte, 64)
+		sha3.ShakeSum128(messageHash, messageToSign)
+	
+		signature := &ecdsa.Signature{
+			R: BigR,
+			S: SigmaShare,
+		}
+		publicPoint := config.PublicPoint()
+		fmt.Println(signature)
+		fmt.Println(publicPoint)
+		fmt.Println(signature.Verify(publicPoint, messageHash), "expected valid signature")
+	
+		return SigmaShare;
+	
+		//return Delta
+	}
+}
+
 func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, forkeys bool) (signatureParts, error) {
 	h, err := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl, forkeys), nil)
 	if err != nil {
