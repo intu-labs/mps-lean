@@ -29,7 +29,24 @@ type round5 struct {
 
 	// R = R|ₓ
 	R curve.Scalar
+
+	ChiShare curve.Scalar
+
+	KShare curve.Scalar
 }
+
+type signatureParts struct {
+	GroupDelta curve.Scalar
+
+	GroupBigDelta curve.Point
+
+	GroupKShare curve.Scalar
+
+	GroupBigR curve.Point
+
+	GroupChiShare curve.Scalar
+}
+
 
 type broadcast5 struct {
 	round.NormalBroadcastContent
@@ -87,17 +104,27 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		S: Sigma,
 	}
 
+	signatureParts := signatureParts{
+		r.Delta,
+		r.BigDelta,
+		r.KShare,
+		r.BigR,
+		r.ChiShare,
+	}
+
 	//b, _ := Sigma.MarshalBinary()
 
 	//if r.SelfID() == "a" {
 	//	printer.Write([]byte(fmt.Sprintf("Sign success %s \nMerged result: %s\n", ethereumhexutil.Encode(r.Message), ethereumhexutil.Encode(b))))
 	//}
 
+
 	if !signature.Verify(r.PublicKey, r.Message) {
 		return r.AbortRound(errors.New("failed to validate signature")), nil
 	}
+//	return r.ResultRound(signature, r.Delta, r.BigDelta, r.KShare, r.BigR, r.ChiShare,), nil
 
-	return r.ResultRound(signature), nil
+	return r.ResultRound(signatureParts,), nil
 }
 
 // MessageContent implements round.Round.

@@ -24,6 +24,8 @@ type round4 struct {
 
 	// ChiShare = χᵢ
 	ChiShare curve.Scalar
+
+	KSHARE curve.Scalar
 }
 
 type message4 struct {
@@ -143,6 +145,7 @@ func (r *round4) Finalize(out chan<- *round.Message) (round.Session, error) {
 		BigDelta:    BigDelta,
 		BigR:        BigR,
 		R:           R,
+		ChiShare:    r.ChiShare,
 	}, nil
 }
 

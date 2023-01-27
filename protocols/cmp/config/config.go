@@ -42,6 +42,17 @@ type Config struct {
 	ChainKey types.RID
 	// Public maps party.ID to public. It contains all public information associated to a party.
 	Public map[party.ID]*Public
+
+	GroupDelta curve.Scalar
+
+	GroupBigDelta curve.Point
+
+	GroupKShare curve.Scalar
+
+	GroupBigR curve.Point
+
+	GroupChiShare curve.Scalar
+
 }
 
 // Public holds public information for a party.
