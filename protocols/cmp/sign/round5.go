@@ -2,6 +2,7 @@ package sign
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/w3-key/mps-lean/pkg/ecdsa"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
@@ -97,7 +98,7 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		S: Sigma,
 	}
 
-	signatureParts := signatureParts{
+	signatureParts := &signatureParts{
 		r.Delta,
 		r.BigDelta,
 		r.KShare,
@@ -114,6 +115,8 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	if !signature.Verify(r.PublicKey, r.Message) {
 		return r.AbortRound(errors.New("failed to validate signature")), nil
 	}
+
+	fmt.Println("Are we getting here?")
 	if (r.JustInfo) {
 		return r.ResultRound(signatureParts), nil
 	} else {
