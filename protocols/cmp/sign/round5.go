@@ -90,12 +90,13 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		S: Sigma,
 	}
 
-	signatureParts := signatureParts{
+	signatureParts := SignatureParts{
 		r.Delta,
 		r.BigDelta,
 		r.KShare,
 		r.BigR,
 		r.ChiShare,
+		r.Group(),
 	}
 
 	//b, _ := Sigma.MarshalBinary()

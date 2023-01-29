@@ -18,15 +18,17 @@ import (
 	"github.com/w3-key/mps-lean/pkg/protocol"
 	"github.com/w3-key/mps-lean/pkg/test"
 	"github.com/w3-key/mps-lean/protocols/cmp"
+	"github.com/w3-key/mps-lean/protocols/cmp/sign"
 	"github.com/w3-key/mps-lean/protocols/example"
 )
 
-type signatureParts struct {
+type SignatureParts struct {
 	GroupDelta curve.Scalar
 	GroupBigDelta curve.Point
 	GroupKShare curve.Scalar
 	GroupBigR curve.Point
 	GroupChiShare curve.Scalar
+	Group curve.Curve
 	}
 
 func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
@@ -74,29 +76,29 @@ func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, err
 	return r.(*cmp.Config), nil
 }
 
-//func SingleSign(specialconfig signatureParts, message []byte) (signresult curve.Scalar) {
-//	group := specialconfig.Group
-//	Delta = specialconfig.GroupDelta
-//	BigDelta = specialconfig.GroupBigDelta
-//	//GammaShare, BigGammaShare := sample.ScalarPointPair(rand.Reader, group)
-//	//GShare := specialconfig.MakeInt(GammaShare)
-//  KShare := specialconfig.GroupKShare
-//  KShareInt := curve.MakeInt(KShare)
-//	//Gamma := group.NewPoint()
-//	//Gamma = Gamma.Add(BigGammaShare)
-//	deltaComputed := Delta.ActOnBase()
-//	if !deltaComputed.Equal(BigDelta) {
-//		fmt.Println("computed Δ is inconsistent with [δ]G")
-//	}
-//	deltaInv := group.NewScalar().Set(Delta).Invert() // δ⁻¹
-//  
-//  BigR := specialconfig.BigR                        // R = [δ⁻¹] Γ
-//	R := BigR.XScalar()                        // r = R|ₓ
-//	km := curve.FromHash(group, message)
-//	km.Mul(KShare)
-//	SigmaShare := group.NewScalar().Set(R).Mul(specialconfig.ChiShare).Add(km)
-//	return SigmaShare;
-//}
+func SingleSign(specialconfig SignatureParts, message []byte) (signresult curve.Scalar) {
+	group := specialconfig.Group
+	//Delta = specialconfig.GroupDelta
+	//BigDelta = specialconfig.GroupBigDelta
+	//GammaShare, BigGammaShare := sample.ScalarPointPair(rand.Reader, group)
+	//GShare := specialconfig.MakeInt(GammaShare)
+  KShare := specialconfig.GroupKShare
+  //KShareInt := curve.MakeInt(KShare)
+	//Gamma := group.NewPoint()
+	//Gamma = Gamma.Add(BigGammaShare)
+	//deltaComputed := Delta.ActOnBase()
+	//if !deltaComputed.Equal(BigDelta) {
+	//	fmt.Println("computed Δ is inconsistent with [δ]G")
+	//}
+	//deltaInv := group.NewScalar().Set(Delta).Invert() // δ⁻¹
+  
+  BigR := specialconfig.GroupBigR                        // R = [δ⁻¹] Γ
+	R := BigR.XScalar()                        // r = R|ₓ
+	km := curve.FromHash(group, message)
+	km.Mul(KShare)
+	SigmaShare := group.NewScalar().Set(R).Mul(specialconfig.GroupChiShare).Add(km)
+	return SigmaShare;
+}
 
 //func CombineSignatures(SigmaShares []string, specialConfig *config.Config) (signature ecdsa.Signature) {
 //	for _, j := range SigmaShares.length{
@@ -110,11 +112,11 @@ func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, err
 //}
 
 
-func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) (signatureParts, error) {
+func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) (SignatureParts, error) {
 	h, _ := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl, justinfo), nil)
 	test.HandlerLoop(c.ID, h, n)
 	signResult, _ := h.Result()
-	//signature := signResult.(*ecdsa.Signature)
+	signaturestuff := signResult.(sign.SignatureParts)
 
 	//sig, err := ethereumhexutil.Decode("0xd8d963bf1fd8e09cc7a55d1f5f39c762036017d662b87e58403752078952be5e34a5dbe67b18b2a9fd46c96866a3c0118d092df8219d0f69034dd8949ed8c34a1c")
 
@@ -139,7 +141,10 @@ func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test
 	//	return signatureParts, errors.New("failed to verify cmp signature")
 	//}
 
-	spew.Dump(signResult.(*ecdsa.Signature))
+
+	
+
+	//spew.Dump(signResult.(*sign.signatureParts))
 
 	//signaturePartsVar := signatureParts{
 	//	&signResult.GroupDelta,
@@ -150,7 +155,14 @@ func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test
 	//}
 
 
-	return signatureParts{}, nil
+	return SignatureParts{
+		signaturestuff.GetDelta(),
+		signaturestuff.GetBigDelta(),
+		signaturestuff.GetKShare(),
+		signaturestuff.GetBigR(),
+		signaturestuff.GetChiShare(),
+		signaturestuff.GetGroup(),
+	}, nil
 }
 
 func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) error {
@@ -226,11 +238,19 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 
 		// CMP SIGN
 		result, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
+		spew.Dump(result)
+		messageToSign := ethereumcrypto.Keccak256([]byte("hellohellohello1hellohellohello1"))
 
-		
+		blah := SingleSign(result, messageToSign)
 
-		fmt.Println("Time to start single sign")
-		fmt.Println(result)
+		spew.Dump(blah)
+
+		//blah := cbor.Marshal(result)
+		//err = cbor.Unmarshal(blah, polyExp2)
+		//unmarshalledConfig := config.EmptyConfig(group)
+		//err = cbor.Unmarshal(marshalledConfig, unmarshalledConfig)
+		//fmt.Println("Time to start single sign")
+		//spew.Dump(result)
 
 	// CMP SIGN
 	//err = CmpSign(refreshConfig, message, signers, n, pl)

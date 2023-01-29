@@ -22,13 +22,38 @@ const (
 	protocolSignRounds round.Number = 5
 )
 
-type signatureParts struct {
+type SignatureParts struct {
 	GroupDelta curve.Scalar
 	GroupBigDelta curve.Point
 	GroupKShare curve.Scalar
 	GroupBigR curve.Point
 	GroupChiShare curve.Scalar
-	}
+	Group curve.Curve
+}
+
+func (s *SignatureParts) GetDelta() curve.Scalar {
+	return s.GroupDelta
+}
+
+func (s *SignatureParts) GetBigDelta() curve.Point {
+	return s.GroupBigDelta
+}
+
+func (s *SignatureParts) GetKShare() curve.Scalar {
+	return s.GroupKShare
+}
+
+func (s *SignatureParts) GetBigR() curve.Point {
+	return s.GroupBigR
+}
+
+func (s *SignatureParts) GetChiShare() curve.Scalar {
+	return s.GroupChiShare
+}
+
+func (s *SignatureParts) GetGroup() curve.Curve {
+	return s.Group
+}
 
 func StartSign(config *config.Config, signers []party.ID, message []byte, pl *pool.Pool, justinfo bool) protocol.StartFunc {
 	return func(sessionID []byte) (round.Session, error) {
