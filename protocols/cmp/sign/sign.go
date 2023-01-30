@@ -31,6 +31,17 @@ type SignatureParts struct {
 	Group curve.Curve
 }
 
+func EmptyConfig(group curve.Curve) SignatureParts {
+	return SignatureParts{
+		GroupDelta: group.NewScalar(),
+		GroupBigDelta: group.NewPoint(),
+		GroupKShare: group.NewScalar(),
+		GroupBigR: group.NewPoint(),
+		GroupChiShare: group.NewScalar(),
+		Group: group,
+	}
+}
+
 func (s *SignatureParts) GetDelta() curve.Scalar {
 	return s.GroupDelta
 }
