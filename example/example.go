@@ -11,6 +11,7 @@ import (
 	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	"github.com/fxamacker/cbor/v2"
 	"github.com/w3-key/mps-lean/pkg/ecdsa"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 	"github.com/w3-key/mps-lean/pkg/party"
@@ -23,13 +24,16 @@ import (
 )
 
 type SignatureParts struct {
-	GroupDelta curve.Scalar
+	GroupDelta    curve.Scalar
 	GroupBigDelta curve.Point
-	GroupKShare curve.Scalar
-	GroupBigR curve.Point
+	GroupKShare   curve.Scalar
+	GroupBigR     curve.Point
 	GroupChiShare curve.Scalar
-	Group curve.Curve
-	}
+	Group         curve.Curve
+}
+
+var signaturePartsArray = []SignatureParts{}
+var signaturesArray = []string{}
 
 func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
 	h, err := protocol.NewMultiHandler(example.StartXOR(id, ids), nil)
@@ -82,8 +86,8 @@ func SingleSign(specialconfig SignatureParts, message []byte) (signresult curve.
 	//BigDelta = specialconfig.GroupBigDelta
 	//GammaShare, BigGammaShare := sample.ScalarPointPair(rand.Reader, group)
 	//GShare := specialconfig.MakeInt(GammaShare)
-  KShare := specialconfig.GroupKShare
-  //KShareInt := curve.MakeInt(KShare)
+	KShare := specialconfig.GroupKShare
+	//KShareInt := curve.MakeInt(KShare)
 	//Gamma := group.NewPoint()
 	//Gamma = Gamma.Add(BigGammaShare)
 	//deltaComputed := Delta.ActOnBase()
@@ -91,13 +95,13 @@ func SingleSign(specialconfig SignatureParts, message []byte) (signresult curve.
 	//	fmt.Println("computed Δ is inconsistent with [δ]G")
 	//}
 	//deltaInv := group.NewScalar().Set(Delta).Invert() // δ⁻¹
-  
-  BigR := specialconfig.GroupBigR                        // R = [δ⁻¹] Γ
-	R := BigR.XScalar()                        // r = R|ₓ
+
+	BigR := specialconfig.GroupBigR // R = [δ⁻¹] Γ
+	R := BigR.XScalar()             // r = R|ₓ
 	km := curve.FromHash(group, message)
 	km.Mul(KShare)
 	SigmaShare := group.NewScalar().Set(R).Mul(specialconfig.GroupChiShare).Add(km)
-	return SigmaShare;
+	return SigmaShare
 }
 
 //func CombineSignatures(SigmaShares []string, specialConfig *config.Config) (signature ecdsa.Signature) {
@@ -111,7 +115,6 @@ func SingleSign(specialconfig SignatureParts, message []byte) (signresult curve.
 //		return signature;
 //}
 
-
 func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) (SignatureParts, error) {
 	h, _ := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl, justinfo), nil)
 	test.HandlerLoop(c.ID, h, n)
@@ -124,7 +127,7 @@ func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test
 
 	//m = []byte("0xc019d8a5f1cbf05267e281484f3ddc2394a6b5eacc14e9d210039cf34d8391fc")
 	//sig[64] = sig[64] - 27
-//
+	//
 	//// println(hex.EncodeToString(sig), "sign")
 	//if ss, err := secp256k1.RecoverPubkey(m, sig); err != nil {
 	//	return signatureParts, err
@@ -132,17 +135,14 @@ func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test
 	//	// bs, _ := c.PublicPoint().MarshalBinary()
 	//	x, y := elliptic.Unmarshal(secp256k1.S256(), ss)
 	//	pk := cryptoecdsa.PublicKey{Curve: secp256k1.S256(), X: x, Y: y}
-//
+	//
 	//	pk2 := c.PublicPoint().ToAddress().Hex()
 	//	println(ethereumcrypto.PubkeyToAddress(pk).Hex(), "public key", pk2)
 	//}
-//
+	//
 	//if !signature.Verify(c.PublicPoint(), m) {
 	//	return signatureParts, errors.New("failed to verify cmp signature")
 	//}
-
-
-	
 
 	//spew.Dump(signResult.(*sign.signatureParts))
 
@@ -153,7 +153,6 @@ func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test
 	//	&signResult.GroupBigR,
 	//	&signResult.GroupChiShare,
 	//}
-
 
 	return SignatureParts{
 		signaturestuff.GetDelta(),
@@ -210,7 +209,6 @@ func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl
 	return nil
 }
 
-
 func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.Network, wg *sync.WaitGroup, pl *pool.Pool) error {
 	defer wg.Done()
 
@@ -229,28 +227,37 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	// CMP REFRESH
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
 
-
 	signers := ids[:threshold+1]
 	if !signers.Contains(id) {
 		n.Quit(id)
 		return nil
 	}
 
-		// CMP SIGN
-		result, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
-		spew.Dump(result)
-		messageToSign := ethereumcrypto.Keccak256([]byte("hellohellohello1hellohellohello1"))
+	// CMP SIGN
+	result, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
+	spew.Dump(result)
+	//messageToSign := ethereumcrypto.Keccak256([]byte("hellohellohello1hellohellohello1"))
+	//signaturePartsArray = append(signaturePartsArray, result)
+	//fmt.Println(signaturePartsArray)
+	//blah := SingleSign(result, messageToSign)
+	//spew.Dump(blah)
+	fmt.Println("RRRRRRRRRRRRRRRRRRRRRRRf")
+	fmt.Println("")
+	marshalSignData, _ := cbor.Marshal(result)
+	fmt.Println(marshalSignData)
+	fmt.Println("MMMMMMMMMMMMMMMMMMMMMMMM")
+	fmt.Println("")
 
-		blah := SingleSign(result, messageToSign)
+	var unmarshalledSignData SignatureParts
+	err = cbor.Unmarshal(marshalSignData, unmarshalledSignData)
+	fmt.Println("UUUUUUUUUUUUUUUUUUUUUUUUU")
+	fmt.Println("")
 
-		spew.Dump(blah)
-
-		//blah := cbor.Marshal(result)
-		//err = cbor.Unmarshal(blah, polyExp2)
-		//unmarshalledConfig := config.EmptyConfig(group)
-		//err = cbor.Unmarshal(marshalledConfig, unmarshalledConfig)
-		//fmt.Println("Time to start single sign")
-		//spew.Dump(result)
+	spew.Dump(unmarshalledSignData)
+	//unmarshalledConfig := config.EmptyConfig(group)
+	//err = cbor.Unmarshal(marshalledConfig, unmarshalledConfig)
+	//fmt.Println("Time to start single sign")
+	//spew.Dump(result)
 
 	// CMP SIGN
 	//err = CmpSign(refreshConfig, message, signers, n, pl)

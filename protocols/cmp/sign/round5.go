@@ -2,7 +2,6 @@ package sign
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/w3-key/mps-lean/pkg/ecdsa"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
@@ -109,11 +108,10 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		return r.AbortRound(errors.New("failed to validate signature")), nil
 	}
 
-	fmt.Println("Are we getting here?")
-	if (r.JustInfo) {
+	if r.JustInfo {
 		return r.ResultRound(signatureParts), nil
 	} else {
-	  return r.ResultRound(signature), nil
+		return r.ResultRound(signature), nil
 	}
 }
 
