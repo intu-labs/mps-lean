@@ -106,16 +106,16 @@ func SingleSign(specialconfig sign.SignatureParts, message []byte) (signresult c
 	return SigmaShare
 }
 
-//func CombineSignatures(SigmaShares []string, specialConfig *config.Config) (signature ecdsa.Signature) {
-//	for _, j := range SigmaShares.length{
-//		Sigma.Add(SigmaShares[j])
-//	}
-//		signature := &ecdsa.Signature{
-//			R: BigR,
-//			S: SigmaShare,
-//		}
-//		return signature;
-//}
+func CombineSignatures(SigmaShares curve.Scalar, specialConfig sign.SignatureParts) (signature ecdsa.Signature) {
+	//for _, j := range SigmaShares.length{
+	//	Sigma.Add(SigmaShares[j])
+	//}
+		combinedSig := ecdsa.Signature{
+			R: specialConfig.GroupBigR,
+			S: SigmaShares,
+		}
+		return combinedSig;
+}
 
 func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) (sign.SignatureParts, error) {
 	h, _ := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl, justinfo), nil)
@@ -125,20 +125,9 @@ func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test
 	//spew.Dump(signaturestuff)
 	messageToSign := ethereumcrypto.Keccak256([]byte("Hi"))
 	blehsign := SingleSign(signaturestuff,messageToSign)
-	if ss, err := ethereumsecp256k1.RecoverPubkey(messageToSign, blehsign); err != nil {
-		return err
-	} else {
-		// bs, _ := c.PublicPoint().MarshalBinary()
-		x, y := elliptic.Unmarshal(ethereumsecp256k1.S256(), ss)
-		pk := cryptoecdsa.PublicKey{Curve: ethereumsecp256k1.S256(), X: x, Y: y}
 
-		pk2 := c.PublicPoint().ToAddress().Hex()
-		println(ethereumcrypto.PubkeyToAddress(pk).Hex(), "public key", pk2)
-	}
-
-	if !signature.Verify(c.PublicPoint(), m) {
-		return errors.New("failed to verify cmp signature")
-	}
+	combined := CombineSignatures(blehsign, signaturestuff)
+	spew.Dump(combined)
 	//sig, err := ethereumhexutil.Decode("0xd8d963bf1fd8e09cc7a55d1f5f39c762036017d662b87e58403752078952be5e34a5dbe67b18b2a9fd46c96866a3c0118d092df8219d0f69034dd8949ed8c34a1c")
 
 	// println(len(rb), len(sb), len(sig), len(m), recoverId, "rb len")
