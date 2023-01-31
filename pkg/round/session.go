@@ -21,6 +21,8 @@ type Info struct {
 	Group curve.Curve
 
 	JustInfo bool
+
+	PublicPoint curve.Point
 }
 
 // Session represents the current execution of a round-based protocol.

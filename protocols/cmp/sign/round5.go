@@ -96,6 +96,7 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		r.BigR,
 		r.ChiShare,
 		r.Group(),
+		r.PublicPoint,
 	}
 
 	//b, _ := Sigma.MarshalBinary()

@@ -26,6 +26,7 @@ type round1 struct {
 	ECDSA          map[party.ID]curve.Point
 	Message []byte
 	JustInfo      bool
+	PublicPoint curve.Point
 }
 
 // VerifyMessage implements round.Round.

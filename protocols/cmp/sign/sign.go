@@ -29,16 +29,19 @@ type SignatureParts struct {
 	GroupBigR curve.Point
 	GroupChiShare curve.Scalar
 	Group curve.Curve
+	GroupPublicPoint curve.Point
 }
 
-func EmptyConfig(group curve.Curve) SignatureParts {
+func (s *SignatureParts) EmptyConfig() SignatureParts {
+	newGroup := curve.Secp256k1{}
 	return SignatureParts{
-		GroupDelta: group.NewScalar(),
-		GroupBigDelta: group.NewPoint(),
-		GroupKShare: group.NewScalar(),
-		GroupBigR: group.NewPoint(),
-		GroupChiShare: group.NewScalar(),
-		Group: group,
+		GroupDelta: newGroup.NewScalar(),
+		GroupBigDelta: newGroup.NewPoint(),
+		GroupKShare: newGroup.NewScalar(),
+		GroupBigR: newGroup.NewPoint(),
+		GroupChiShare: newGroup.NewScalar(),
+		Group: newGroup,
+		GroupPublicPoint: newGroup.NewPoint(),
 	}
 }
 
@@ -66,6 +69,10 @@ func (s *SignatureParts) GetGroup() curve.Curve {
 	return s.Group
 }
 
+func (s *SignatureParts) GetGroupPublicPoint() curve.Point {
+	return s.GroupPublicPoint
+}
+
 func StartSign(config *config.Config, signers []party.ID, message []byte, pl *pool.Pool, justinfo bool) protocol.StartFunc {
 	return func(sessionID []byte) (round.Session, error) {
 		group := config.Group
@@ -83,6 +90,7 @@ func StartSign(config *config.Config, signers []party.ID, message []byte, pl *po
 			Threshold:        config.Threshold,
 			Group:            config.Group,
 			JustInfo:         justinfo,
+			PublicPoint:      config.PublicPoint(),
 		}
 
 		helper, err := round.NewSession(info, sessionID, pl, config, types.SigningMessage(message))
@@ -122,6 +130,7 @@ func StartSign(config *config.Config, signers []party.ID, message []byte, pl *po
 			ECDSA:          ECDSA,
 			Message:        message,
 			JustInfo:       justinfo,
+			PublicPoint:    config.PublicPoint(),
 		}, nil
 	}
 }
