@@ -5,12 +5,12 @@ import (
 	"sync"
 
 	"github.com/davecgh/go-spew/spew"
+	ethereumcommon "github.com/ethereum/go-ethereum/common"
 	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/fxamacker/cbor/v2"
 	"github.com/klaytn/klaytn/common"
-	"github.com/klaytn/klaytn/common/hexutil"
-	"github.com/klaytn/klaytn/crypto"
+	"github.com/storyicon/sigverify"
 	"github.com/w3-key/mps-lean/pkg/ecdsa"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 	"github.com/w3-key/mps-lean/pkg/party"
@@ -21,8 +21,10 @@ import (
 	"github.com/w3-key/mps-lean/protocols/cmp/sign"
 	"github.com/w3-key/mps-lean/protocols/example"
 )
-var signaturePartsArray = []*sign.SignatureParts{}
+
+var signaturePartsArray = []sign.SignatureParts{}
 var signaturesArray = []curve.Scalar{}
+var masterPublicAddress ethereumcommon.Address
 
 func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
 	h, err := protocol.NewMultiHandler(example.StartXOR(id, ids), nil)
@@ -80,16 +82,26 @@ func SingleSign(specialConfig sign.SignatureParts, message []byte) (signresult c
 	return SigmaShare
 }
 
-func CombineSignatures(SigmaShares curve.Scalar, specialConfig *sign.SignatureParts) (signature ecdsa.Signature) {
-	Sigma := specialConfig.Group.NewScalar()
+func CombineSignatures(SigmaShares []curve.Scalar, specialConfig []sign.SignatureParts) (signature ecdsa.Signature) {
+	var Sigma curve.Scalar
+	var BigR curve.Point
 
-
-	Sigma.Add(SigmaShares)
-		combinedSig := ecdsa.Signature{
-			R: specialConfig.GroupBigR,
-			S: SigmaShares,
-		}
-		return combinedSig;
+	for id, config := range specialConfig {
+		fmt.Println(id)
+		Sigma = config.Group.NewScalar()
+		BigR = config.GetBigR()
+		//maybe also try the GetBigR function
+	}
+	fmt.Println(Sigma)
+	for id, SS := range SigmaShares {
+		fmt.Println(id)
+		Sigma.Add(SS)
+	}
+	combinedSig := ecdsa.Signature{
+		R: BigR,
+		S: Sigma,
+	}
+	return combinedSig
 }
 
 func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) (sign.SignatureParts, error) {
@@ -128,7 +140,7 @@ func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl
 	sig[64] = sig[64] - 27
 
 	// println(hex.EncodeToString(sig), "sign")
-	
+
 	return nil
 }
 
@@ -143,6 +155,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		return err
 	}
 	fmt.Println(keygenConfig.PublicPoint().ToAddress())
+	masterPublicAddress = keygenConfig.PublicPoint().ToAddress()
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
 	signers := ids[:threshold+1]
 	if !signers.Contains(id) {
@@ -150,10 +163,11 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		return nil
 	}
 
-	var unmarshalledSigData *sign.SignatureParts 
+	var unmarshalledSigData *sign.SignatureParts
 	unmarshalledConfig := unmarshalledSigData.EmptyConfig()
 
 	sigparts, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
+	signaturePartsArray = append(signaturePartsArray, sigparts)
 	marshalledConfig, err := cbor.Marshal(sigparts)
 	if err != nil {
 		fmt.Println(err)
@@ -164,26 +178,16 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		fmt.Println(err)
 	}
 	//this will be done before signing ^
-	blehsign := SingleSign(unmarshalledConfig,message)
+	blehsign := SingleSign(unmarshalledConfig, message)
 	//store result of singlesign, marshalled or base64?
-	combined := CombineSignatures(blehsign, &sigparts)
-	fmt.Println("combined")
-	spew.Dump(combined)
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Println("")
-	sigForVerification, _ := combined.ToEthBytes()
-	fmt.Println(sigForVerification)
-	sig := hexutil.MustDecode("0x" + common.Bytes2Hex(sigForVerification))
-	fmt.Println("sig")
-	spew.Dump(sig)
-	recovered, err := crypto.SigToPub(message, sig)
-	if err != nil {
-		fmt.Println("ERROR: ", err)
-	}
-	fmt.Println(recovered)
+	signaturesArray = append(signaturesArray, blehsign)
+
+	//spew.Dump(sig)
+	//recovered, err := crypto.SigToPub(message, sig)
+	//if err != nil {
+	//	fmt.Println("ERROR: ", err)
+	//}
+	//fmt.Println(recovered)
 
 	//publicPoint := sigparts.GetGroupPublicPoint()
 	//spew.Dump(publicPoint)
@@ -210,5 +214,20 @@ func main() {
 			}
 		}(id)
 	}
+	spew.Dump(len(signaturePartsArray))
+	combined := CombineSignatures(signaturesArray, signaturePartsArray)
+
+	sigForVerification, _ := combined.ToEthBytes()
+	sig := "0x" + common.Bytes2Hex(sigForVerification)
+
+	valid, err := sigverify.VerifyEllipticCurveHexSignatureEx(
+		masterPublicAddress,
+		messageToSign,
+		sig,
+	)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(valid)
 	wg.Wait()
 }
