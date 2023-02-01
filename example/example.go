@@ -1,16 +1,25 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"math/big"
 	"sync"
+	"time"
 
-	"github.com/davecgh/go-spew/spew"
-	ethereumcommon "github.com/ethereum/go-ethereum/common"
 	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
+	"golang.org/x/crypto/sha3"
+
+	"github.com/davecgh/go-spew/spew"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/fxamacker/cbor/v2"
-	"github.com/klaytn/klaytn/common"
-	"github.com/storyicon/sigverify"
+	"github.com/klaytn/klaytn/common/hexutil"
+	"github.com/klaytn/klaytn/rlp"
+
 	"github.com/w3-key/mps-lean/pkg/ecdsa"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 	"github.com/w3-key/mps-lean/pkg/party"
@@ -22,9 +31,13 @@ import (
 	"github.com/w3-key/mps-lean/protocols/example"
 )
 
-var signaturePartsArray = []sign.SignatureParts{}
+//var signatureConfigArray []sign.SignatureParts
+//var signaturesArray curve.Scalar
+var signatureConfigArray = []sign.SignatureParts{}
 var signaturesArray = []curve.Scalar{}
-var masterPublicAddress ethereumcommon.Address
+var masterPublicAddress common.Address
+var finalDataToSign []byte
+var finalEmptyTx *types.Transaction
 
 func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
 	h, err := protocol.NewMultiHandler(example.StartXOR(id, ids), nil)
@@ -118,7 +131,6 @@ func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl
 		return err
 	}
 	test.HandlerLoop(c.ID, h, n)
-
 	signResult, err := h.Result()
 	if err != nil {
 		return err
@@ -128,23 +140,153 @@ func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl
 	if err != nil {
 		return err
 	}
-
 	sig, err := ethereumhexutil.Decode("0xd8d963bf1fd8e09cc7a55d1f5f39c762036017d662b87e58403752078952be5e34a5dbe67b18b2a9fd46c96866a3c0118d092df8219d0f69034dd8949ed8c34a1c")
-
 	if err != nil {
 		return err
 	}
 	// println(len(rb), len(sb), len(sig), len(m), recoverId, "rb len")
-
 	m = []byte("0xc019d8a5f1cbf05267e281484f3ddc2394a6b5eacc14e9d210039cf34d8391fc")
 	sig[64] = sig[64] - 27
-
 	// println(hex.EncodeToString(sig), "sign")
-
 	return nil
 }
 
+func FundEOA(client1 *ethclient.Client, eoa common.Address) error {
+	var privateKey, _ = crypto.HexToECDSA("c99a62c5540f68590fff30338e730fc1bea3f3c6fd4bb964e3618c6519a027eb")
+	var data []byte
+	var chainID, _ = client1.NetworkID(context.Background())
+	var fundvalue = big.NewInt(10000000000000000)
+	var fromAddress2 = common.HexToAddress("0x94fD43dE0095165eE054554E1A84ccEfa8fdA47F")
+	var nonce2, _ = client1.PendingNonceAt(context.Background(), fromAddress2)
+	var gas, _ = hexutil.DecodeUint64("0x5208")
+	var gasPrice, _ = client1.SuggestGasPrice(context.Background())
+	manualCreatedTx := types.NewTx(&types.LegacyTx{
+		Nonce:    nonce2+1,
+		GasPrice: gasPrice,
+		Gas:      gas,
+		To:       &eoa,
+		Value:    fundvalue,
+		Data:     data,
+	})
+	signedFUNDTx, _ := types.SignTx(manualCreatedTx, types.NewLondonSigner(chainID), privateKey)
+	meh1 := client1.SendTransaction(context.Background(), signedFUNDTx)
+	fmt.Println("FUNDING TX BELOW")
+	spew.Dump(meh1)
+	return nil
+}
+
+func FormTransaction(client1 *ethclient.Client) ([]byte, error) {
+
+	var nonce1, _ = client1.PendingNonceAt(context.Background(), masterPublicAddress)
+	var value1 = big.NewInt(1000000000000000)
+	var gasLimit1 = uint64(21000)              
+	var tip1 = big.NewInt(2000000000)          
+	var feeCap1 = big.NewInt(20000000000)      
+	var data1 []byte
+	var chainID1, _ = client1.NetworkID(context.Background())
+	var toAddress1 = common.HexToAddress("0x94fD43dE0095165eE054554E1A84ccEfa8fdA47F")
+
+	emptyNewTx := types.NewTx(&types.DynamicFeeTx{
+		ChainID:   chainID1,
+		Nonce:     nonce1,
+		GasTipCap: tip1,
+		GasFeeCap: feeCap1,
+		Gas:       gasLimit1,
+		To:        &toAddress1,
+		Value:     value1,
+		Data:      data1,
+		AccessList: nil,
+	})
+	
+	finalEmptyTx = emptyNewTx
+
+	blah := []interface{}{
+		chainID1,
+		emptyNewTx.Nonce(),
+		emptyNewTx.GasTipCap(),
+		emptyNewTx.GasFeeCap(),
+		emptyNewTx.Gas(),
+		emptyNewTx.To(),
+		emptyNewTx.Value(),
+		emptyNewTx.Data(),
+		emptyNewTx.AccessList(),
+	}
+
+	hashtoSign := prefixedRlpHash(emptyNewTx.Type(), blah)
+	hashBytes := hashtoSign.Bytes()
+	finalDataToSign = hashBytes
+	fmt.Println("DATATOSIGN")
+	fmt.Println(finalDataToSign)
+	return hashBytes, nil
+}
+
+func SendTransaction(SigmaShares []curve.Scalar, specialConfig []sign.SignatureParts) error {
+	var client1, _ = ethclient.Dial("https://rpc.ankr.com/eth_goerli")
+	var chainID1, _ = client1.NetworkID(context.Background())
+
+	signature := CombineSignatures(signaturesArray, signatureConfigArray)
+	sigForVerification, _ := signature.ToEthBytes()
+	sig := hexutil.MustDecode("0x" + common.Bytes2Hex(sigForVerification))
+
+	
+	fmt.Println("TIMESTARTWAITFORFUNDING")
+	time.Sleep(20 * time.Second)
+	fmt.Println("TIMEENDWAITFORFUNDING")	
+	balance, _ := client1.BalanceAt(context.Background(), masterPublicAddress, nil)
+	fmt.Println("BALANCEOFEOASTART")
+	fmt.Println(balance)
+	fmt.Println("BALANCEOFEOAEND")
+	emptyNewTxSigned, _ := finalEmptyTx.WithSignature(types.NewLondonSigner(chainID1), sig)
+	
+	//fmt.Println("TIMESTARTTRANSACTIONSENT")
+	//time.Sleep(20 * time.Second)
+	//fmt.Println("TIMESTARTTRANSACTIONEND")	
+	
+	meh := client1.SendTransaction(context.Background(), emptyNewTxSigned)
+	fmt.Println("SIGNED WITH WITHSIGNATURE")
+	spew.Dump(meh)
+	ParseTransactionBaseInfo(emptyNewTxSigned)
+	return nil
+}
+
+
+func ParseTransactionBaseInfo(tx *types.Transaction) {
+	txV, txR, txS := tx.RawSignatureValues()
+	fmt.Printf("PARSE TX BASE INFO\n")
+	fmt.Printf("Hash: %s\n", tx.Hash().Hex())
+	fmt.Printf("ChainId: %d\n", tx.ChainId())
+	fmt.Printf("Value: %s\n", tx.Value().String())
+	fmt.Printf("EOA from Manually formed TX: %s\n", GetTransactionMessage(tx).From().Hex()) // from field is not inside of transation
+	fmt.Printf("To: %s\n", tx.To().Hex())
+	fmt.Printf("Gas: %d\n", tx.Gas())
+	fmt.Printf("Gas Price: %d\n", tx.GasPrice().Uint64())
+	fmt.Printf("Nonce: %d\n", tx.Nonce())
+	fmt.Printf("R: %d\nS: %d\nV: %d", txR, txS, txV)
+	//fmt.Print("\n")
+}
+
+func GetTransactionMessage(tx *types.Transaction) types.Message {
+	msg, _ := tx.AsMessage(types.LatestSignerForChainID(tx.ChainId()), nil)
+	return msg
+}
+
+var hasherPool = sync.Pool{
+	New: func() interface{} { return sha3.NewLegacyKeccak256() },
+}
+
+func prefixedRlpHash(prefix byte, x interface{}) (h common.Hash) {
+	sha := hasherPool.Get().(crypto.KeccakState)
+	defer hasherPool.Put(sha)
+	sha.Reset()
+	sha.Write([]byte{prefix})
+	rlp.Encode(sha, x)
+	sha.Read(h[:])
+	return h
+}
+
+
 func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.Network, wg *sync.WaitGroup, pl *pool.Pool) error {
+	var client1, _ = ethclient.Dial("https://rpc.ankr.com/eth_goerli")
 	defer wg.Done()
 	err := XOR(id, ids, n)
 	if err != nil {
@@ -154,7 +296,9 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	if err != nil {
 		return err
 	}
-	fmt.Println(keygenConfig.PublicPoint().ToAddress())
+	if (id == "a") {
+	fmt.Println("EOA ADDRESS: ", keygenConfig.PublicPoint().ToAddress())
+	}
 	masterPublicAddress = keygenConfig.PublicPoint().ToAddress()
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
 	signers := ids[:threshold+1]
@@ -167,7 +311,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	unmarshalledConfig := unmarshalledSigData.EmptyConfig()
 
 	sigparts, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
-	signaturePartsArray = append(signaturePartsArray, sigparts)
+	signatureConfigArray = append(signatureConfigArray, sigparts)
 	marshalledConfig, err := cbor.Marshal(sigparts)
 	if err != nil {
 		fmt.Println(err)
@@ -177,26 +321,35 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	if err != nil {
 		fmt.Println(err)
 	}
-	//this will be done before signing ^
-	blehsign := SingleSign(unmarshalledConfig, message)
-	//store result of singlesign, marshalled or base64?
-	signaturesArray = append(signaturesArray, blehsign)
+	if (id == "a") {
+	FundEOA(client1, masterPublicAddress)
+	FormTransaction(client1)
+	}
+	
+	if (id == "a") {
+		share := SingleSign(signatureConfigArray[0], finalDataToSign)
+		signaturesArray = append(signaturesArray,share)
+	}
 
-	//spew.Dump(sig)
-	//recovered, err := crypto.SigToPub(message, sig)
-	//if err != nil {
-	//	fmt.Println("ERROR: ", err)
+	if (id == "b") {
+		share := SingleSign(signatureConfigArray[1], finalDataToSign)
+		signaturesArray = append(signaturesArray,share)
+	}
+
+	//if (id == "c") {
+	//	share := SingleSign(signatureConfigArray[2], finalDataToSign)
+	//	signaturesArray = append(signaturesArray,share)
 	//}
-	//fmt.Println(recovered)
 
-	//publicPoint := sigparts.GetGroupPublicPoint()
-	//spew.Dump(publicPoint)
-	//fmt.Println(combined.Verify(publicPoint, message))
+	if (id == "b") {
+	SendTransaction(signaturesArray, signatureConfigArray)
+	}
 
-	//marshalSignData, _ := cbor.Marshal(result)
-	//spew.Dump(marshalSignData)
 	return nil
 }
+
+
+
 
 func main() {
 	ids := party.IDSlice{"a", "b"}
@@ -214,20 +367,6 @@ func main() {
 			}
 		}(id)
 	}
-	spew.Dump(len(signaturePartsArray))
-	combined := CombineSignatures(signaturesArray, signaturePartsArray)
 
-	sigForVerification, _ := combined.ToEthBytes()
-	sig := "0x" + common.Bytes2Hex(sigForVerification)
-
-	valid, err := sigverify.VerifyEllipticCurveHexSignatureEx(
-		masterPublicAddress,
-		messageToSign,
-		sig,
-	)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(valid)
 	wg.Wait()
 }
