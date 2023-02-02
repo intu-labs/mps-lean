@@ -298,7 +298,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	}
 
 	if (id == "a") {
-		FundEOA(client1, masterPublicAddress)
+		//FundEOA(client1, masterPublicAddress)
 		FormTransaction(client1)
 		}
 
@@ -321,31 +321,35 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	if (id == "a") {
 		share := SingleSign(signatureConfigArray[0], finalDataToSign)
 		signaturesArray = append(signaturesArray,share)
+		fmt.Println(id)
+		fmt.Println(signaturesArray)
 	}
+
 
 	if (id == "b") {
 		share := SingleSign(signatureConfigArray[1], finalDataToSign)
 		signaturesArray = append(signaturesArray,share)
+		fmt.Println(id)
+		fmt.Println(signaturesArray)
 	}
 
 	if (id == "c") {
 		share := SingleSign(signatureConfigArray[2], finalDataToSign)
 		signaturesArray = append(signaturesArray,share)
+		fmt.Println(id)
+		fmt.Println(signaturesArray)
 	}
 
-	if (id == "b" || id == "c" || id == "d" || id == "e" || id == "") {
+	if (id == "c" || id == "d" || id == "e" || id == "") {
 	SendTransaction(signaturesArray, signatureConfigArray)
 	}
 
 	return nil
 }
 
-
-
-
 func main() {
-	ids := party.IDSlice{"a", "b"}
-	threshold := 1
+	ids := party.IDSlice{"a", "b", "c"}
+	threshold := 2
 	messageToSign := ethereumcrypto.Keccak256([]byte("Hi"))
 	net := test.NewNetwork(ids)
 	var wg sync.WaitGroup
