@@ -1,7 +1,6 @@
 package ecdsa
 
 import (
-
 	dcrm256k1 "github.com/anyswap/FastMulThreshold-DSA/crypto/secp256k1"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 )
@@ -30,7 +29,7 @@ func (sig Signature) ToEthBytes() ([]byte, error) {
 		return nil, err
 	}
 
-	recoverId := sig.GetEthRecoverId()
+	recoverId := sig.GetRecoverId()
 
 	sigbytes := append(rb[1:], sb...)
 	sigbytes = append(sigbytes, recoverId)

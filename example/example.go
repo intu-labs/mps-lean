@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	ethereumhexutil "github.com/ethereum/go-ethereum/common/hexutil"
 	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
 	"golang.org/x/crypto/sha3"
 
@@ -38,6 +37,9 @@ var signaturesArray = []curve.Scalar{}
 var masterPublicAddress common.Address
 var finalDataToSign []byte
 var finalEmptyTx *types.Transaction
+//var endpoint string = "https://goerli.infura.io/v3/f0b33e4b953e4306b6d5e8b9f9d51567"
+//var endpoint string = "https://sepolia.infura.io/v3/f0b33e4b953e4306b6d5e8b9f9d51567"
+var endpoint string = "https://rpc.sepolia.org/"
 
 func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
 	h, err := protocol.NewMultiHandler(example.StartXOR(id, ids), nil)
@@ -57,15 +59,12 @@ func CMPKeygen(id party.ID, ids party.IDSlice, threshold int, n *test.Network, p
 	if err != nil {
 		return nil, err
 	}
-
 	test.HandlerLoop(id, h, n)
 	r, err := h.Result()
 	if err != nil {
 		return nil, err
 	}
-
 	config := r.(*cmp.Config)
-
 	return config, nil
 }
 
@@ -99,21 +98,20 @@ func CombineSignatures(SigmaShares []curve.Scalar, specialConfig []sign.Signatur
 	var Sigma curve.Scalar
 	var BigR curve.Point
 
-	for id, config := range specialConfig {
-		fmt.Println(id)
+	for _, config := range specialConfig {
 		Sigma = config.Group.NewScalar()
-		BigR = config.GetBigR()
+		BigR = config.GroupBigR
 		//maybe also try the GetBigR function
 	}
-	fmt.Println(Sigma)
-	for id, SS := range SigmaShares {
-		fmt.Println(id)
+	for _, SS := range SigmaShares {
 		Sigma.Add(SS)
 	}
+
 	combinedSig := ecdsa.Signature{
 		R: BigR,
 		S: Sigma,
 	}
+
 	return combinedSig
 }
 
@@ -125,60 +123,33 @@ func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test
 	return sigparts, nil
 }
 
-func CMPSign(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) error {
-	h, err := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl, justinfo), nil)
-	if err != nil {
-		return err
-	}
-	test.HandlerLoop(c.ID, h, n)
-	signResult, err := h.Result()
-	if err != nil {
-		return err
-	}
-	signature := signResult.(*ecdsa.Signature)
-	fmt.Println(signature)
-	if err != nil {
-		return err
-	}
-	sig, err := ethereumhexutil.Decode("0xd8d963bf1fd8e09cc7a55d1f5f39c762036017d662b87e58403752078952be5e34a5dbe67b18b2a9fd46c96866a3c0118d092df8219d0f69034dd8949ed8c34a1c")
-	if err != nil {
-		return err
-	}
-	// println(len(rb), len(sb), len(sig), len(m), recoverId, "rb len")
-	m = []byte("0xc019d8a5f1cbf05267e281484f3ddc2394a6b5eacc14e9d210039cf34d8391fc")
-	sig[64] = sig[64] - 27
-	// println(hex.EncodeToString(sig), "sign")
-	return nil
-}
-
 func FundEOA(client1 *ethclient.Client, eoa common.Address) error {
 	var privateKey, _ = crypto.HexToECDSA("c99a62c5540f68590fff30338e730fc1bea3f3c6fd4bb964e3618c6519a027eb")
 	var data []byte
 	var chainID, _ = client1.NetworkID(context.Background())
-	var fundvalue = big.NewInt(10000000000000000)
+	var fundvalue = big.NewInt(100000000000000)
 	var fromAddress2 = common.HexToAddress("0x94fD43dE0095165eE054554E1A84ccEfa8fdA47F")
 	var nonce2, _ = client1.PendingNonceAt(context.Background(), fromAddress2)
 	var gas, _ = hexutil.DecodeUint64("0x5208")
 	var gasPrice, _ = client1.SuggestGasPrice(context.Background())
 	manualCreatedTx := types.NewTx(&types.LegacyTx{
-		Nonce:    nonce2+1,
+		Nonce:    nonce2,
 		GasPrice: gasPrice,
 		Gas:      gas,
 		To:       &eoa,
 		Value:    fundvalue,
 		Data:     data,
 	})
-	signedFUNDTx, _ := types.SignTx(manualCreatedTx, types.NewLondonSigner(chainID), privateKey)
-	meh1 := client1.SendTransaction(context.Background(), signedFUNDTx)
-	fmt.Println("FUNDING TX BELOW")
-	spew.Dump(meh1)
+	signedFUNDTx, _ := types.SignTx(manualCreatedTx, types.LatestSignerForChainID(chainID), privateKey)
+	client1.SendTransaction(context.Background(), signedFUNDTx)
+	//this works fine
 	return nil
 }
 
 func FormTransaction(client1 *ethclient.Client) ([]byte, error) {
 
 	var nonce1, _ = client1.PendingNonceAt(context.Background(), masterPublicAddress)
-	var value1 = big.NewInt(1000000000000000)
+	var value1 = big.NewInt(10000000000000)
 	var gasLimit1 = uint64(21000)              
 	var tip1 = big.NewInt(2000000000)          
 	var feeCap1 = big.NewInt(20000000000)      
@@ -221,27 +192,44 @@ func FormTransaction(client1 *ethclient.Client) ([]byte, error) {
 }
 
 func SendTransaction(SigmaShares []curve.Scalar, specialConfig []sign.SignatureParts) error {
-	var client1, _ = ethclient.Dial("https://rpc.ankr.com/eth_goerli")
+	var client1, _ = ethclient.Dial(endpoint)
 	var chainID1, _ = client1.NetworkID(context.Background())
 
 	signature := CombineSignatures(signaturesArray, signatureConfigArray)
+
+  //IMPORTANT CALLOUT HERE, I CHANGED THE the function below to use GetRecoverId instead of GetEthRecoverId. This allowed the rest of this stuff to verify.	
 	sigForVerification, _ := signature.ToEthBytes()
+
 	sig := hexutil.MustDecode("0x" + common.Bytes2Hex(sigForVerification))
 
-	
-	fmt.Println("TIMESTARTWAITFORFUNDING")
-	time.Sleep(20 * time.Second)
-	fmt.Println("TIMEENDWAITFORFUNDING")	
-	balance, _ := client1.BalanceAt(context.Background(), masterPublicAddress, nil)
-	fmt.Println("BALANCEOFEOASTART")
-	fmt.Println(balance)
-	fmt.Println("BALANCEOFEOAEND")
+	//Comemnting this out, it continually resolves to the EOA ADDRESS / masterpublickey, keeping it here in case we need to test it again.
+	//recovered, err := crypto.SigToPub(finalDataToSign, sig)
+	//if err != nil {
+	//	fmt.Println("ERROR: ", err)
+	//}
+	//recoveredAddr := crypto.PubkeyToAddress(*recovered)
+	//fmt.Println("recoveredaddr", recoveredAddr)
+
+	var privateKey, _ = crypto.HexToECDSA("c99a62c5540f68590fff30338e730fc1bea3f3c6fd4bb964e3618c6519a027eb")
+	signedFUNDTx, _ := types.SignTx(finalEmptyTx, types.LatestSignerForChainID(chainID1), privateKey)
+	blahblah := client1.SendTransaction(context.Background(), signedFUNDTx)
+	spew.Dump(blahblah)
+
+	//var toAddress1 = common.HexToAddress("0x94fD43dE0095165eE054554E1A84ccEfa8fdA47F")
+
+	//fmt.Println("TIMESTARTWAITFORFUNDING")
+	time.Sleep(10 * time.Second)
+	//fmt.Println("TIMEENDWAITFORFUNDING")	
+	//balance, _ := client1.BalanceAt(context.Background(), masterPublicAddress, nil)
+	//fmt.Println("BALANCEOFEOASTART")
+	//fmt.Println(balance)
+	//fmt.Println("BALANCEOFEOAEND")
 	emptyNewTxSigned, _ := finalEmptyTx.WithSignature(types.NewLondonSigner(chainID1), sig)
 	
 	//fmt.Println("TIMESTARTTRANSACTIONSENT")
 	//time.Sleep(20 * time.Second)
 	//fmt.Println("TIMESTARTTRANSACTIONEND")	
-	
+	fmt.Println(emptyNewTxSigned)
 	meh := client1.SendTransaction(context.Background(), emptyNewTxSigned)
 	fmt.Println("SIGNED WITH WITHSIGNATURE")
 	spew.Dump(meh)
@@ -249,8 +237,8 @@ func SendTransaction(SigmaShares []curve.Scalar, specialConfig []sign.SignatureP
 	return nil
 }
 
-
 func ParseTransactionBaseInfo(tx *types.Transaction) {
+	spew.Dump(tx)
 	txV, txR, txS := tx.RawSignatureValues()
 	fmt.Printf("PARSE TX BASE INFO\n")
 	fmt.Printf("Hash: %s\n", tx.Hash().Hex())
@@ -286,7 +274,7 @@ func prefixedRlpHash(prefix byte, x interface{}) (h common.Hash) {
 
 
 func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.Network, wg *sync.WaitGroup, pl *pool.Pool) error {
-	var client1, _ = ethclient.Dial("https://rpc.ankr.com/eth_goerli")
+	var client1, _ = ethclient.Dial(endpoint)
 	defer wg.Done()
 	err := XOR(id, ids, n)
 	if err != nil {
@@ -298,14 +286,20 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	}
 	if (id == "a") {
 	fmt.Println("EOA ADDRESS: ", keygenConfig.PublicPoint().ToAddress())
-	}
 	masterPublicAddress = keygenConfig.PublicPoint().ToAddress()
+}
+
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
 	signers := ids[:threshold+1]
 	if !signers.Contains(id) {
 		n.Quit(id)
 		return nil
 	}
+
+	if (id == "a") {
+		FundEOA(client1, masterPublicAddress)
+		FormTransaction(client1)
+		}
 
 	var unmarshalledSigData *sign.SignatureParts
 	unmarshalledConfig := unmarshalledSigData.EmptyConfig()
@@ -321,10 +315,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	if err != nil {
 		fmt.Println(err)
 	}
-	if (id == "a") {
-	FundEOA(client1, masterPublicAddress)
-	FormTransaction(client1)
-	}
+
 	
 	if (id == "a") {
 		share := SingleSign(signatureConfigArray[0], finalDataToSign)
@@ -336,12 +327,12 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		signaturesArray = append(signaturesArray,share)
 	}
 
-	//if (id == "c") {
-	//	share := SingleSign(signatureConfigArray[2], finalDataToSign)
-	//	signaturesArray = append(signaturesArray,share)
-	//}
+	if (id == "c") {
+		share := SingleSign(signatureConfigArray[2], finalDataToSign)
+		signaturesArray = append(signaturesArray,share)
+	}
 
-	if (id == "b") {
+	if (id == "b" || id == "c" || id == "d" || id == "e" || id == "") {
 	SendTransaction(signaturesArray, signatureConfigArray)
 	}
 
