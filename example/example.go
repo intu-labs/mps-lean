@@ -55,6 +55,7 @@ func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
 }
 
 func CMPKeygen(id party.ID, ids party.IDSlice, threshold int, n *test.Network, pl *pool.Pool) (*cmp.Config, error) {
+	//existing function, keygen
 	h, err := protocol.NewMultiHandler(cmp.Keygen(curve.Secp256k1{}, id, ids, threshold, pl), nil)
 	if err != nil {
 		return nil, err
@@ -69,6 +70,7 @@ func CMPKeygen(id party.ID, ids party.IDSlice, threshold int, n *test.Network, p
 }
 
 func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, error) {
+	//existing function, confirms the keygen works
 	hRefresh, err := protocol.NewMultiHandler(cmp.Refresh(c, pl), nil)
 	if err != nil {
 		return nil, err
@@ -84,6 +86,7 @@ func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, err
 }
 
 func SingleSign(specialConfig sign.SignatureParts, message []byte) (signresult curve.Scalar) {
+	//this signs a message for a single participant using their signatureparts
 	group := specialConfig.Group
 	KShare := specialConfig.GroupKShare
 	BigR := specialConfig.GroupBigR // R = [δ⁻¹] Γ
@@ -95,6 +98,7 @@ func SingleSign(specialConfig sign.SignatureParts, message []byte) (signresult c
 }
 
 func CombineSignatures(SigmaShares []curve.Scalar, specialConfig []sign.SignatureParts) (signature ecdsa.Signature) {
+	//this combines signatures from vault participants
 	var Sigma curve.Scalar
 	var BigR curve.Point
 
@@ -116,6 +120,7 @@ func CombineSignatures(SigmaShares []curve.Scalar, specialConfig []sign.Signatur
 }
 
 func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) (sign.SignatureParts, error) {
+	//this is my special function to get the users Groupsignature parts
 	h, _ := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl, justinfo), nil)
 	test.HandlerLoop(c.ID, h, n)
 	signResult, _ := h.Result()
@@ -124,10 +129,11 @@ func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test
 }
 
 func FundEOA(client1 *ethclient.Client, eoa common.Address) error {
+	//this is a dummy function I have in place to fund the EOA
 	var privateKey, _ = crypto.HexToECDSA("c99a62c5540f68590fff30338e730fc1bea3f3c6fd4bb964e3618c6519a027eb")
 	var data []byte
 	var chainID, _ = client1.NetworkID(context.Background())
-	var fundvalue = big.NewInt(100000000000000)
+	var fundvalue = big.NewInt(1000000000000000)
 	var fromAddress2 = common.HexToAddress("0x94fD43dE0095165eE054554E1A84ccEfa8fdA47F")
 	var nonce2, _ = client1.PendingNonceAt(context.Background(), fromAddress2)
 	var gas, _ = hexutil.DecodeUint64("0x5208")
@@ -147,7 +153,7 @@ func FundEOA(client1 *ethclient.Client, eoa common.Address) error {
 }
 
 func FormTransaction(client1 *ethclient.Client) ([]byte, error) {
-
+	//this will be used when the transaction submission is made by a vault participant, it will not show up in the signing/combining/sending process
 	var nonce1, _ = client1.PendingNonceAt(context.Background(), masterPublicAddress)
 	var value1 = big.NewInt(10000000000000)
 	var gasLimit1 = uint64(21000)              
@@ -210,21 +216,16 @@ func SendTransaction(SigmaShares []curve.Scalar, specialConfig []sign.SignatureP
 	//recoveredAddr := crypto.PubkeyToAddress(*recovered)
 	//fmt.Println("recoveredaddr", recoveredAddr)
 
-	var privateKey, _ = crypto.HexToECDSA("c99a62c5540f68590fff30338e730fc1bea3f3c6fd4bb964e3618c6519a027eb")
-	signedFUNDTx, _ := types.SignTx(finalEmptyTx, types.LatestSignerForChainID(chainID1), privateKey)
-	blahblah := client1.SendTransaction(context.Background(), signedFUNDTx)
-	spew.Dump(blahblah)
-
 	//var toAddress1 = common.HexToAddress("0x94fD43dE0095165eE054554E1A84ccEfa8fdA47F")
 
 	//fmt.Println("TIMESTARTWAITFORFUNDING")
-	time.Sleep(10 * time.Second)
+	time.Sleep(15 * time.Second)
 	//fmt.Println("TIMEENDWAITFORFUNDING")	
 	//balance, _ := client1.BalanceAt(context.Background(), masterPublicAddress, nil)
 	//fmt.Println("BALANCEOFEOASTART")
 	//fmt.Println(balance)
 	//fmt.Println("BALANCEOFEOAEND")
-	emptyNewTxSigned, _ := finalEmptyTx.WithSignature(types.NewLondonSigner(chainID1), sig)
+	emptyNewTxSigned, _ := finalEmptyTx.WithSignature(types.LatestSignerForChainID(chainID1), sig)
 	
 	//fmt.Println("TIMESTARTTRANSACTIONSENT")
 	//time.Sleep(20 * time.Second)
