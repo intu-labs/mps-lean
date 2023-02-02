@@ -22,15 +22,58 @@ const (
 	protocolSignRounds round.Number = 5
 )
 
-type signatureParts struct {
+type SignatureParts struct {
 	GroupDelta curve.Scalar
 	GroupBigDelta curve.Point
 	GroupKShare curve.Scalar
 	GroupBigR curve.Point
 	GroupChiShare curve.Scalar
-	}
+	Group curve.Curve
+	GroupPublicPoint curve.Point
+}
 
-func StartSign(config *config.Config, signers []party.ID, message []byte, pl *pool.Pool) protocol.StartFunc {
+func (s *SignatureParts) EmptyConfig() SignatureParts {
+	newGroup := curve.Secp256k1{}
+	return SignatureParts{
+		GroupDelta: newGroup.NewScalar(),
+		GroupBigDelta: newGroup.NewPoint(),
+		GroupKShare: newGroup.NewScalar(),
+		GroupBigR: newGroup.NewPoint(),
+		GroupChiShare: newGroup.NewScalar(),
+		Group: newGroup,
+		GroupPublicPoint: newGroup.NewPoint(),
+	}
+}
+
+func (s *SignatureParts) GetDelta() curve.Scalar {
+	return s.GroupDelta
+}
+
+func (s *SignatureParts) GetBigDelta() curve.Point {
+	return s.GroupBigDelta
+}
+
+func (s *SignatureParts) GetKShare() curve.Scalar {
+	return s.GroupKShare
+}
+
+func (s *SignatureParts) GetBigR() curve.Point {
+	return s.GroupBigR
+}
+
+func (s *SignatureParts) GetChiShare() curve.Scalar {
+	return s.GroupChiShare
+}
+
+func (s *SignatureParts) GetGroup() curve.Curve {
+	return s.Group
+}
+
+func (s *SignatureParts) GetGroupPublicPoint() curve.Point {
+	return s.GroupPublicPoint
+}
+
+func StartSign(config *config.Config, signers []party.ID, message []byte, pl *pool.Pool, justinfo bool) protocol.StartFunc {
 	return func(sessionID []byte) (round.Session, error) {
 		group := config.Group
 
@@ -46,6 +89,8 @@ func StartSign(config *config.Config, signers []party.ID, message []byte, pl *po
 			PartyIDs:         signers,
 			Threshold:        config.Threshold,
 			Group:            config.Group,
+			JustInfo:         justinfo,
+			PublicPoint:      config.PublicPoint(),
 		}
 
 		helper, err := round.NewSession(info, sessionID, pl, config, types.SigningMessage(message))
@@ -84,6 +129,8 @@ func StartSign(config *config.Config, signers []party.ID, message []byte, pl *po
 			Pedersen:       Pedersen,
 			ECDSA:          ECDSA,
 			Message:        message,
+			JustInfo:       justinfo,
+			PublicPoint:    config.PublicPoint(),
 		}, nil
 	}
 }

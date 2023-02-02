@@ -29,7 +29,7 @@ func (sig Signature) ToEthBytes() ([]byte, error) {
 		return nil, err
 	}
 
-	recoverId := sig.GetEthRecoverId()
+	recoverId := sig.GetRecoverId()
 
 	sigbytes := append(rb[1:], sb...)
 	sigbytes = append(sigbytes, recoverId)

@@ -143,6 +143,7 @@ func (r *round4) Finalize(out chan<- *round.Message) (round.Session, error) {
 		BigDelta:    BigDelta,
 		BigR:        BigR,
 		R:           R,
+		ChiShare:    r.ChiShare,
 	}, nil
 }
 

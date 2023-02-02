@@ -29,6 +29,8 @@ type round5 struct {
 
 	// R = R|ₓ
 	R curve.Scalar
+
+	ChiShare curve.Scalar
 }
 
 type broadcast5 struct {
@@ -87,6 +89,16 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		S: Sigma,
 	}
 
+	signatureParts := SignatureParts{
+		r.Delta,
+		r.BigDelta,
+		r.KShare,
+		r.BigR,
+		r.ChiShare,
+		r.Group(),
+		r.PublicPoint,
+	}
+
 	//b, _ := Sigma.MarshalBinary()
 
 	//if r.SelfID() == "a" {
@@ -97,7 +109,11 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 		return r.AbortRound(errors.New("failed to validate signature")), nil
 	}
 
-	return r.ResultRound(signature), nil
+	if r.JustInfo {
+		return r.ResultRound(signatureParts), nil
+	} else {
+		return r.ResultRound(signature), nil
+	}
 }
 
 // MessageContent implements round.Round.

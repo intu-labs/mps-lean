@@ -184,7 +184,7 @@ func (h *Helper) ResultRound(result interface{}) Session {
 		Helper: h,
 		Result: result,
 	}
-}
+}	
 
 // AbortRound returns a round that contains only the culprits that were able to be identified during
 // a faulty execution of the protocol. The error returned by Round.Finalize() in this case should still be nil.

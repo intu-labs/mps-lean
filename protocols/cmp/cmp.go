@@ -1,7 +1,6 @@
 package cmp
 
 import (
-	"github.com/w3-key/mps-lean/pkg/ecdsa"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 	"github.com/w3-key/mps-lean/pkg/party"
 	"github.com/w3-key/mps-lean/pkg/pool"
@@ -9,7 +8,6 @@ import (
 	"github.com/w3-key/mps-lean/pkg/round"
 	"github.com/w3-key/mps-lean/protocols/cmp/config"
 	"github.com/w3-key/mps-lean/protocols/cmp/keygen"
-	"github.com/w3-key/mps-lean/protocols/cmp/presign"
 	"github.com/w3-key/mps-lean/protocols/cmp/sign"
 )
 
@@ -61,21 +59,6 @@ func Refresh(config *Config, pl *pool.Pool) protocol.StartFunc {
 
 // Sign generates an ECDSA signature for `messageHash` among the given `signers`.
 // Returns *ecdsa.Signature if successful.
-func Sign(config *Config, signers []party.ID, messageHash []byte, pl *pool.Pool) protocol.StartFunc {
-	return sign.StartSign(config, signers, messageHash, pl)
-}
-
-// Presign generates a preprocessed signature that does not depend on the message being signed.
-// When the message becomes available, the same participants can efficiently combine their shares
-// to produce a full signature with the PresignOnline protocol.
-// Note: the PreSignatures should be treated as secret key material.
-// Returns *ecdsa.PreSignature if successful.
-func Presign(config *Config, signers []party.ID, pl *pool.Pool) protocol.StartFunc {
-	return presign.StartPresign(config, signers, nil, pl)
-}
-
-// PresignOnline efficiently generates an ECDSA signature for `messageHash` given a preprocessed `PreSignature`.
-// Returns *ecdsa.Signature if successful.
-func PresignOnline(config *Config, preSignature *ecdsa.PreSignature, messageHash []byte, pl *pool.Pool) protocol.StartFunc {
-	return presign.StartPresignOnline(config, preSignature, messageHash, pl)
+func Sign(config *Config, signers []party.ID, messageHash []byte, pl *pool.Pool, forkeys bool) protocol.StartFunc {
+	return sign.StartSign(config, signers, messageHash, pl, forkeys)
 }

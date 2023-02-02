@@ -19,6 +19,10 @@ type Info struct {
 	Threshold int
 	// Group returns the group used for this protocol execution.
 	Group curve.Curve
+
+	JustInfo bool
+
+	PublicPoint curve.Point
 }
 
 // Session represents the current execution of a round-based protocol.
