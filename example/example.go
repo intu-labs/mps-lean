@@ -298,7 +298,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	}
 
 	if id == "a" {
-		FundEOA(client1, masterPublicAddress)
+		//FundEOA(client1, masterPublicAddress)
 		FormTransaction(client1)
 	}
 	fmt.Println("HERRE")
@@ -321,19 +321,25 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	if id == "a" {
 		share := SingleSign(signatureConfigArray[0], finalDataToSign)
 		signaturesArray = append(signaturesArray, share)
+		fmt.Println(id)
+		fmt.Println(signaturesArray)
 	}
 
 	if id == "b" {
 		share := SingleSign(signatureConfigArray[1], finalDataToSign)
 		signaturesArray = append(signaturesArray, share)
+		fmt.Println(id)
+		fmt.Println(signaturesArray)
 	}
 
 	if id == "c" {
 		share := SingleSign(signatureConfigArray[2], finalDataToSign)
 		signaturesArray = append(signaturesArray, share)
+		fmt.Println(id)
+		fmt.Println(signaturesArray)
 	}
 
-	if id == "b" || id == "c" || id == "d" || id == "e" || id == "" {
+	if id == "c" || id == "d" || id == "e" || id == "" {
 		SendTransaction(signaturesArray, signatureConfigArray)
 	}
 
