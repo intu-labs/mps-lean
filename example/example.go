@@ -37,6 +37,7 @@ var signaturesArray = []curve.Scalar{}
 var masterPublicAddress common.Address
 var finalDataToSign []byte
 var finalEmptyTx *types.Transaction
+
 //var endpoint string = "https://goerli.infura.io/v3/f0b33e4b953e4306b6d5e8b9f9d51567"
 //var endpoint string = "https://sepolia.infura.io/v3/f0b33e4b953e4306b6d5e8b9f9d51567"
 var endpoint string = "https://rpc.sepolia.org/"
@@ -156,25 +157,25 @@ func FormTransaction(client1 *ethclient.Client) ([]byte, error) {
 	//this will be used when the transaction submission is made by a vault participant, it will not show up in the signing/combining/sending process
 	var nonce1, _ = client1.PendingNonceAt(context.Background(), masterPublicAddress)
 	var value1 = big.NewInt(10000000000000)
-	var gasLimit1 = uint64(21000)              
-	var tip1 = big.NewInt(2000000000)          
-	var feeCap1 = big.NewInt(20000000000)      
+	var gasLimit1 = uint64(21000)
+	var tip1 = big.NewInt(2000000000)
+	var feeCap1 = big.NewInt(20000000000)
 	var data1 []byte
 	var chainID1, _ = client1.NetworkID(context.Background())
 	var toAddress1 = common.HexToAddress("0x94fD43dE0095165eE054554E1A84ccEfa8fdA47F")
 
 	emptyNewTx := types.NewTx(&types.DynamicFeeTx{
-		ChainID:   chainID1,
-		Nonce:     nonce1,
-		GasTipCap: tip1,
-		GasFeeCap: feeCap1,
-		Gas:       gasLimit1,
-		To:        &toAddress1,
-		Value:     value1,
-		Data:      data1,
+		ChainID:    chainID1,
+		Nonce:      nonce1,
+		GasTipCap:  tip1,
+		GasFeeCap:  feeCap1,
+		Gas:        gasLimit1,
+		To:         &toAddress1,
+		Value:      value1,
+		Data:       data1,
 		AccessList: nil,
 	})
-	
+
 	finalEmptyTx = emptyNewTx
 
 	blah := []interface{}{
@@ -203,7 +204,7 @@ func SendTransaction(SigmaShares []curve.Scalar, specialConfig []sign.SignatureP
 
 	signature := CombineSignatures(signaturesArray, signatureConfigArray)
 
-  //IMPORTANT CALLOUT HERE, I CHANGED THE the function below to use GetRecoverId instead of GetEthRecoverId. This allowed the rest of this stuff to verify.	
+	//IMPORTANT CALLOUT HERE, I CHANGED THE the function below to use GetRecoverId instead of GetEthRecoverId. This allowed the rest of this stuff to verify.
 	sigForVerification, _ := signature.ToEthBytes()
 
 	sig := hexutil.MustDecode("0x" + common.Bytes2Hex(sigForVerification))
@@ -220,16 +221,16 @@ func SendTransaction(SigmaShares []curve.Scalar, specialConfig []sign.SignatureP
 
 	//fmt.Println("TIMESTARTWAITFORFUNDING")
 	time.Sleep(15 * time.Second)
-	//fmt.Println("TIMEENDWAITFORFUNDING")	
+	//fmt.Println("TIMEENDWAITFORFUNDING")
 	//balance, _ := client1.BalanceAt(context.Background(), masterPublicAddress, nil)
 	//fmt.Println("BALANCEOFEOASTART")
 	//fmt.Println(balance)
 	//fmt.Println("BALANCEOFEOAEND")
 	emptyNewTxSigned, _ := finalEmptyTx.WithSignature(types.LatestSignerForChainID(chainID1), sig)
-	
+
 	//fmt.Println("TIMESTARTTRANSACTIONSENT")
 	//time.Sleep(20 * time.Second)
-	//fmt.Println("TIMESTARTTRANSACTIONEND")	
+	//fmt.Println("TIMESTARTTRANSACTIONEND")
 	fmt.Println(emptyNewTxSigned)
 	meh := client1.SendTransaction(context.Background(), emptyNewTxSigned)
 	fmt.Println("SIGNED WITH WITHSIGNATURE")
@@ -273,7 +274,6 @@ func prefixedRlpHash(prefix byte, x interface{}) (h common.Hash) {
 	return h
 }
 
-
 func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.Network, wg *sync.WaitGroup, pl *pool.Pool) error {
 	var client1, _ = ethclient.Dial(endpoint)
 	defer wg.Done()
@@ -285,10 +285,10 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	if err != nil {
 		return err
 	}
-	if (id == "a") {
-	fmt.Println("EOA ADDRESS: ", keygenConfig.PublicPoint().ToAddress())
-	masterPublicAddress = keygenConfig.PublicPoint().ToAddress()
-}
+	if id == "a" {
+		fmt.Println("EOA ADDRESS: ", keygenConfig.PublicPoint().ToAddress())
+		masterPublicAddress = keygenConfig.PublicPoint().ToAddress()
+	}
 
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
 	signers := ids[:threshold+1]
@@ -297,10 +297,11 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		return nil
 	}
 
-	if (id == "a") {
+	if id == "a" {
 		FundEOA(client1, masterPublicAddress)
 		FormTransaction(client1)
-		}
+	}
+	fmt.Println("HERRE")
 
 	var unmarshalledSigData *sign.SignatureParts
 	unmarshalledConfig := unmarshalledSigData.EmptyConfig()
@@ -317,35 +318,31 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		fmt.Println(err)
 	}
 
-	
-	if (id == "a") {
+	if id == "a" {
 		share := SingleSign(signatureConfigArray[0], finalDataToSign)
-		signaturesArray = append(signaturesArray,share)
+		signaturesArray = append(signaturesArray, share)
 	}
 
-	if (id == "b") {
+	if id == "b" {
 		share := SingleSign(signatureConfigArray[1], finalDataToSign)
-		signaturesArray = append(signaturesArray,share)
+		signaturesArray = append(signaturesArray, share)
 	}
 
-	if (id == "c") {
+	if id == "c" {
 		share := SingleSign(signatureConfigArray[2], finalDataToSign)
-		signaturesArray = append(signaturesArray,share)
+		signaturesArray = append(signaturesArray, share)
 	}
 
-	if (id == "b" || id == "c" || id == "d" || id == "e" || id == "") {
-	SendTransaction(signaturesArray, signatureConfigArray)
+	if id == "b" || id == "c" || id == "d" || id == "e" || id == "" {
+		SendTransaction(signaturesArray, signatureConfigArray)
 	}
 
 	return nil
 }
 
-
-
-
 func main() {
-	ids := party.IDSlice{"a", "b"}
-	threshold := 1
+	ids := party.IDSlice{"a", "b", "c"}
+	threshold := 2
 	messageToSign := ethereumcrypto.Keccak256([]byte("Hi"))
 	net := test.NewNetwork(ids)
 	var wg sync.WaitGroup
