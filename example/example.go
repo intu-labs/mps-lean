@@ -298,7 +298,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	}
 
 	if id == "a" {
-		//FundEOA(client1, masterPublicAddress)
+		FundEOA(client1, masterPublicAddress)
 		FormTransaction(client1)
 	}
 	fmt.Println("HERRE")
@@ -323,6 +323,15 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		signaturesArray = append(signaturesArray, share)
 		fmt.Println(id)
 		fmt.Println(signaturesArray)
+
+		/*sigForVerification, _ := signature.ToEthBytes()
+		sig := hexutil.MustDecode("0x" + common.Bytes2Hex(sigForVerification))
+		emptyNewTxSigned, _ := finalEmptyTx.WithSignature(types.LatestSignerForChainID(chainID1), sig)
+		fmt.Println(emptyNewTxSigned)
+		meh := client1.SendTransaction(context.Background(), emptyNewTxSigned)
+		fmt.Println("SIGNED WITH WITHSIGNATURE")
+		spew.Dump(meh)
+		ParseTransactionBaseInfo(emptyNewTxSigned)*/
 	}
 
 	if id == "b" {
