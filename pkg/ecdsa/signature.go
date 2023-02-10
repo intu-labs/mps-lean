@@ -1,7 +1,10 @@
 package ecdsa
 
 import (
-	dcrm256k1 "github.com/anyswap/FastMulThreshold-DSA/crypto/secp256k1"
+	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 )
 
@@ -29,21 +32,21 @@ func (sig Signature) ToEthBytes() ([]byte, error) {
 		return nil, err
 	}
 
-	recoverId := sig.GetRecoverId()
+	recoverId := sig.GetRecoverIdIntu()
 
 	sigbytes := append(rb[1:], sb...)
 	sigbytes = append(sigbytes, recoverId)
 	return sigbytes, nil
 }
 
-func (sig Signature) GetRecoverId() byte {
+func (sig Signature) GetRecoverIdIntu() byte {
 	toECDSA := sig.R.ToECDSA()
-	return byte(dcrm256k1.Get_ecdsa_sign_v(toECDSA.X, toECDSA.Y))
-}
-
-func (sig Signature) GetEthRecoverId() byte {
-	toECDSA := sig.R.ToECDSA()
-	return byte(dcrm256k1.Get_ecdsa_sign_v(toECDSA.X, toECDSA.Y) + 27)
+	stringY := fmt.Sprint(toECDSA.Y)
+	a := strings.Split(stringY, "")
+	s := a[len(a)-1]
+	i, _ := strconv.Atoi(s)
+	finalV := i % 2
+	return byte(finalV)
 }
 
 // Verify is a custom signature format using curve data.

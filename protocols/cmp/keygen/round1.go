@@ -86,6 +86,7 @@ func (r *round1) Finalize(out chan<- *round.Message) (round.Session, error) {
 	if err != nil {
 		return r, errors.New("failed to sample c")
 	}
+
 	// 各节点进行签名
 	// commit to data in message 2
 	SelfCommitment, Decommitment, err := r.HashForID(r.SelfID()).Commit(
