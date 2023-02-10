@@ -297,59 +297,62 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		return nil
 	}
 
-	if id == "a" {
-		FundEOA(client1, masterPublicAddress)
-		FormTransaction(client1)
-	}
-	fmt.Println("HERRE")
+	for i := 1; i < 10; i++ {
 
-	var unmarshalledSigData *sign.SignatureParts
-	unmarshalledConfig := unmarshalledSigData.EmptyConfig()
+		if id == "a" {
+			FundEOA(client1, masterPublicAddress)
+			FormTransaction(client1)
+		}
+		fmt.Println("HERRE")
 
-	sigparts, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
-	signatureConfigArray = append(signatureConfigArray, sigparts)
-	marshalledConfig, err := cbor.Marshal(sigparts)
-	if err != nil {
-		fmt.Println(err)
-	}
-	//store marshalledconfigs
-	err = cbor.Unmarshal(marshalledConfig, &unmarshalledConfig)
-	if err != nil {
-		fmt.Println(err)
-	}
+		var unmarshalledSigData *sign.SignatureParts
+		unmarshalledConfig := unmarshalledSigData.EmptyConfig()
 
-	if id == "a" {
-		share := SingleSign(signatureConfigArray[0], finalDataToSign)
-		signaturesArray = append(signaturesArray, share)
-		fmt.Println(id)
-		fmt.Println(signaturesArray)
+		sigparts, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
+		signatureConfigArray = append(signatureConfigArray, sigparts)
+		marshalledConfig, err := cbor.Marshal(sigparts)
+		if err != nil {
+			fmt.Println(err)
+		}
+		//store marshalledconfigs
+		err = cbor.Unmarshal(marshalledConfig, &unmarshalledConfig)
+		if err != nil {
+			fmt.Println(err)
+		}
 
-		/*sigForVerification, _ := signature.ToEthBytes()
-		sig := hexutil.MustDecode("0x" + common.Bytes2Hex(sigForVerification))
-		emptyNewTxSigned, _ := finalEmptyTx.WithSignature(types.LatestSignerForChainID(chainID1), sig)
-		fmt.Println(emptyNewTxSigned)
-		meh := client1.SendTransaction(context.Background(), emptyNewTxSigned)
-		fmt.Println("SIGNED WITH WITHSIGNATURE")
-		spew.Dump(meh)
-		ParseTransactionBaseInfo(emptyNewTxSigned)*/
-	}
+		if id == "a" {
+			share := SingleSign(signatureConfigArray[0], finalDataToSign)
+			signaturesArray = append(signaturesArray, share)
+			fmt.Println(id)
+			fmt.Println(signaturesArray)
 
-	if id == "b" {
-		share := SingleSign(signatureConfigArray[1], finalDataToSign)
-		signaturesArray = append(signaturesArray, share)
-		fmt.Println(id)
-		fmt.Println(signaturesArray)
-	}
+			/*sigForVerification, _ := signature.ToEthBytes()
+			sig := hexutil.MustDecode("0x" + common.Bytes2Hex(sigForVerification))
+			emptyNewTxSigned, _ := finalEmptyTx.WithSignature(types.LatestSignerForChainID(chainID1), sig)
+			fmt.Println(emptyNewTxSigned)
+			meh := client1.SendTransaction(context.Background(), emptyNewTxSigned)
+			fmt.Println("SIGNED WITH WITHSIGNATURE")
+			spew.Dump(meh)
+			ParseTransactionBaseInfo(emptyNewTxSigned)*/
+		}
 
-	if id == "c" {
-		share := SingleSign(signatureConfigArray[2], finalDataToSign)
-		signaturesArray = append(signaturesArray, share)
-		fmt.Println(id)
-		fmt.Println(signaturesArray)
-	}
+		if id == "b" {
+			share := SingleSign(signatureConfigArray[1], finalDataToSign)
+			signaturesArray = append(signaturesArray, share)
+			fmt.Println(id)
+			fmt.Println(signaturesArray)
+		}
 
-	if id == "c" || id == "d" || id == "e" || id == "" {
-		SendTransaction(signaturesArray, signatureConfigArray)
+		if id == "c" {
+			share := SingleSign(signatureConfigArray[2], finalDataToSign)
+			signaturesArray = append(signaturesArray, share)
+			fmt.Println(id)
+			fmt.Println(signaturesArray)
+		}
+
+		if id == "c" || id == "d" || id == "e" || id == "" {
+			SendTransaction(signaturesArray, signatureConfigArray)
+		}
 	}
 
 	return nil
