@@ -356,8 +356,8 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 }
 
 func main() {
-	ids := party.IDSlice{"a", "b", "c"}
-	threshold := 2
+	ids := party.IDSlice{"a", "b"}
+	threshold := 1
 	messageToSign := ethereumcrypto.Keccak256([]byte("Hi"))
 	net := test.NewNetwork(ids)
 	var wg sync.WaitGroup
