@@ -323,7 +323,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	}
 	//spew.Dump(refreshConfig.ECDSA)
 
-
+	//for i := 1; i < 3; i++ {
 	if (id == "a") {
 		//FundEOA(client1, masterPublicAddress)
 		FormTransaction(client1)
@@ -348,33 +348,42 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		share := SingleSign(signatureConfigArray[0], finalDataToSign)
 		signaturesArray = append(signaturesArray,share)
 		fmt.Println("A SEND TX")
+		fmt.Println("A SEND TX")
 		spew.Dump(share)
-		tempArray1 := append(tempArray1,share)
-		SendTransaction(tempArray1, signatureConfigArray)
+		//tempArray1 := append(tempArray1,share)
+		SendTransaction(signaturesArray, signatureConfigArray)
+		fmt.Println("A SEND TXEND")
+		fmt.Println("A SEND TXEND")
+
+
 	}
+	time.Sleep(7 * time.Second)
 
 	if (id == "b") {
 		share := SingleSign(signatureConfigArray[1], finalDataToSign)
 		signaturesArray = append(signaturesArray,share)
 		fmt.Println("B SEND TX COMBINED")
-		spew.Dump(share)
-		tempArray2 := append(tempArray1,share)
-		SendTransaction(tempArray2, signatureConfigArray)
+		//tempArray2 := append(tempArray1,share)
+		SendTransaction(signaturesArray, signatureConfigArray)
 	}
+	//time.Sleep(7 * time.Second)
+	//if (id == "c") {
+	//	share := SingleSign(signatureConfigArray[1], finalDataToSign)
+	//	signaturesArray = append(signaturesArray,share)
+	//	fmt.Println("C SEND TX COMBINED")
+	//	//tempArray2 := append(tempArray2,share)
+	//	SendTransaction(signaturesArray, signatureConfigArray)
+	//}
+	//time.Sleep(7 * time.Second)
+//
+	//fmt.Println("after both, combine")
+	//SendTransaction(signaturesArray, signatureConfigArray)
 
-	fmt.Println("after both, combine")
-	SendTransaction(signaturesArray, signatureConfigArray)
-
-
-	if (id == "c") {
-		share := SingleSign(signatureConfigArray[2], finalDataToSign)
-		signaturesArray = append(signaturesArray,share)
-	}
 
 	//if (id == "b" || id == "c" || id == "d" || id == "e") {
 	//SendTransaction(signaturesArray, signatureConfigArray)
 	//}
-
+	//}
 	return nil
 }
 
