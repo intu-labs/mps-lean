@@ -39,6 +39,7 @@ import (
 //var signaturesArray curve.Scalar
 var signatureConfigArray = []sign.SignatureParts{}
 var signaturesArray = []curve.Scalar{}
+var signaturesArray2 = []curve.Scalar{}
 var masterPublicAddress common.Address
 var finalDataToSign []byte
 var finalEmptyTx *types.Transaction
@@ -134,30 +135,6 @@ func GenerateSignatureConfigs(c *cmp.Config, m []byte, signers party.IDSlice, n 
 	return sigparts, nil
 }
 
-func FundEOA(client1 *ethclient.Client, eoa common.Address) error {
-	//this is a dummy function I have in place to fund the EOA
-	var privateKey, _ = crypto.HexToECDSA("c99a62c5540f68590fff30338e730fc1000000000000000000000000000000")
-	var data []byte
-	var chainID, _ = client1.NetworkID(context.Background())
-	var fundvalue = big.NewInt(1000000000000000)
-	var fromAddress2 = common.HexToAddress("0x94fD43dE0095165eE054554E1A84ccEfa8fdA47F")
-	var nonce2, _ = client1.PendingNonceAt(context.Background(), fromAddress2)
-	var gas, _ = hexutil.DecodeUint64("0x5208")
-	var gasPrice, _ = client1.SuggestGasPrice(context.Background())
-	manualCreatedTx := types.NewTx(&types.LegacyTx{
-		Nonce:    nonce2,
-		GasPrice: gasPrice,
-		Gas:      gas,
-		To:       &eoa,
-		Value:    fundvalue,
-		Data:     data,
-	})
-	signedFUNDTx, _ := types.SignTx(manualCreatedTx, types.LatestSignerForChainID(chainID), privateKey)
-	client1.SendTransaction(context.Background(), signedFUNDTx)
-	//this works fine
-	return nil
-}
-
 func FormTransaction(client1 *ethclient.Client) ([]byte, error) {
 	//this will be used when the transaction submission is made by a vault participant, it will not show up in the signing/combining/sending process
 	var nonce1, _ = client1.PendingNonceAt(context.Background(), masterPublicAddress)
@@ -211,6 +188,8 @@ func FormTransaction(client1 *ethclient.Client) ([]byte, error) {
 		emptyNewTx.AccessList(),
 	}
 
+
+
 	hashtoSign := prefixedRlpHash(emptyNewTx.Type(), blah)
 	hashBytes := hashtoSign.Bytes()
 	finalDataToSign = hashBytes
@@ -223,7 +202,7 @@ func SendTransaction(SigmaShares []curve.Scalar, specialConfig []sign.SignatureP
 	var client1, _ = ethclient.Dial(endpoint)
 	var chainID1, _ = client1.NetworkID(context.Background())
 
-	signature := CombineShares(signaturesArray, signatureConfigArray[0])
+	signature := CombineShares(SigmaShares, signatureConfigArray[0])
 
   //IMPORTANT CALLOUT HERE, I CHANGED THE the function below to use GetRecoverId instead of GetEthRecoverId. This allowed the rest of this stuff to verify.	
 	sigForVerification, _ := signature.ToEthBytes()
@@ -349,7 +328,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		signaturesArray = append(signaturesArray,share)
 		fmt.Println("A SEND TX")
 		fmt.Println("A SEND TX")
-		spew.Dump(share)
+		spew.Dump(signaturesArray)
 		//tempArray1 := append(tempArray1,share)
 		SendTransaction(signaturesArray, signatureConfigArray)
 		fmt.Println("A SEND TXEND")
@@ -357,15 +336,88 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 
 
 	}
-	time.Sleep(7 * time.Second)
+	//
+	time.Sleep(1 * time.Second)
 
 	if (id == "b") {
 		share := SingleSign(signatureConfigArray[1], finalDataToSign)
 		signaturesArray = append(signaturesArray,share)
 		fmt.Println("B SEND TX COMBINED")
 		//tempArray2 := append(tempArray1,share)
+		spew.Dump(signaturesArray)
+
 		SendTransaction(signaturesArray, signatureConfigArray)
 	}
+	time.Sleep(1 * time.Second)
+	fmt.Println("sign again if everything failed")
+
+	var nonce1, _ = client1.PendingNonceAt(context.Background(), masterPublicAddress)
+	var value1 = big.NewInt(10000000111111)
+	var gasLimit1 = uint64(21111)              
+	var tip1 = big.NewInt(2000000111)          
+	var feeCap1 = big.NewInt(20000000111)      
+	var data1 []byte
+	var chainID1, _ = client1.NetworkID(context.Background())
+	var toAddress1 = common.HexToAddress("0x2995f3727d2b47DfD09c97588879dEDE5312B274")
+
+	emptyNewTx := types.NewTx(&types.DynamicFeeTx{
+		ChainID:   chainID1,
+		Nonce:     nonce1,
+		GasTipCap: tip1,
+		GasFeeCap: feeCap1,
+		Gas:       gasLimit1,
+		To:        &toAddress1,
+		Value:     value1,
+		Data:      data1,
+		AccessList: nil,
+	})
+
+	//fmt.Println("IMPORTANT TX FIGURING OUT STUFF")
+	//fmt.Println(emptyNewTx)
+
+	//fmt.Println(txplaceholder)
+	
+	finalEmptyTx = emptyNewTx
+
+	blah2 := []interface{}{
+		chainID1,
+		emptyNewTx.Nonce(),
+		emptyNewTx.GasTipCap(),
+		emptyNewTx.GasFeeCap(),
+		emptyNewTx.Gas(),
+		emptyNewTx.To(),
+		emptyNewTx.Value(),
+		emptyNewTx.Data(),
+		emptyNewTx.AccessList(),
+	}
+
+	hashtoSign2 := prefixedRlpHash(emptyNewTx.Type(), blah2)
+	hashBytes2 := hashtoSign2.Bytes()
+
+	if (id == "a") {
+		share := SingleSign(signatureConfigArray[0], hashBytes2)
+		signaturesArray = append(signaturesArray2,share)
+		fmt.Println("A SEND TX22222")
+		fmt.Println("A SEND TX22222")
+		spew.Dump(share)
+		//tempArray1 := append(tempArray1,share)
+		SendTransaction(signaturesArray2, signatureConfigArray)
+		fmt.Println("A SEND TXEND22222")
+		fmt.Println("A SEND TXEND22222")
+
+
+	}
+	time.Sleep(1 * time.Second)
+
+	if (id == "b") {
+		share := SingleSign(signatureConfigArray[1], hashBytes2)
+		signaturesArray = append(signaturesArray,share)
+		fmt.Println("B SEND TX COMBINED22222")
+		//tempArray2 := append(tempArray1,share)
+		SendTransaction(signaturesArray, signatureConfigArray)
+	}
+	time.Sleep(1 * time.Second)
+
 	//time.Sleep(7 * time.Second)
 	//if (id == "c") {
 	//	share := SingleSign(signatureConfigArray[1], finalDataToSign)
@@ -388,8 +440,8 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 }
 
 func main() {
-	ids := party.IDSlice{"a", "b"}
-	threshold := 1
+	ids := party.IDSlice{"a", "b", "c"}
+	threshold := 2
 	messageToSign := ethereumcrypto.Keccak256([]byte("pariskeymessage"))
 	net := test.NewNetwork(ids)
 	var wg sync.WaitGroup
@@ -405,4 +457,28 @@ func main() {
 	}
 
 	wg.Wait()
+}
+
+func FundEOA(client1 *ethclient.Client, eoa common.Address) error {
+	//this is a dummy function I have in place to fund the EOA
+	var privateKey, _ = crypto.HexToECDSA("c99a62c5540f68590fff30338e730fc1000000000000000000000000000000")
+	var data []byte
+	var chainID, _ = client1.NetworkID(context.Background())
+	var fundvalue = big.NewInt(1000000000000000)
+	var fromAddress2 = common.HexToAddress("0x94fD43dE0095165eE054554E1A84ccEfa8fdA47F")
+	var nonce2, _ = client1.PendingNonceAt(context.Background(), fromAddress2)
+	var gas, _ = hexutil.DecodeUint64("0x5208")
+	var gasPrice, _ = client1.SuggestGasPrice(context.Background())
+	manualCreatedTx := types.NewTx(&types.LegacyTx{
+		Nonce:    nonce2,
+		GasPrice: gasPrice,
+		Gas:      gas,
+		To:       &eoa,
+		Value:    fundvalue,
+		Data:     data,
+	})
+	signedFUNDTx, _ := types.SignTx(manualCreatedTx, types.LatestSignerForChainID(chainID), privateKey)
+	client1.SendTransaction(context.Background(), signedFUNDTx)
+	//this works fine
+	return nil
 }

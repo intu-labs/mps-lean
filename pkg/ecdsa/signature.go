@@ -32,9 +32,9 @@ func (sig Signature) RecoveryId() byte {
 		recid ^= 1
 	}
 
-	fmt.Println("Recid")
-	fmt.Println(recid)
-	fmt.Println("Recid")
+	//fmt.Println("Recid")
+	//fmt.Println(recid)
+	//fmt.Println("Recid")
 
 	return recid
 }
@@ -91,7 +91,7 @@ func (sig Signature) ToEthBytes() ([]byte, error) {
 		return nil, err
 	}
 
-	recoverId := sig.RecoveryId()
+	recoverId := sig.GetRecoverIdIntu()
 
 	sigbytes := append(rb[1:], sb...)
 	sigbytes = append(sigbytes, recoverId)
