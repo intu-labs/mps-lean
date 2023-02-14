@@ -18,6 +18,65 @@ func EmptySignature(group curve.Curve) Signature {
 	return Signature{R: group.NewPoint(), S: group.NewScalar()}
 }
 
+func (sig Signature) RecoveryId() byte {
+	r := sig.R.(*curve.Secp256k1Point)
+	s := sig.S.(*curve.Secp256k1Scalar)
+
+	var recid byte = 0
+
+	if !r.HasEvenY() {
+		recid = 1;
+	}
+
+	if s.Value().IsOverHalfOrder() {
+		recid ^= 1
+	}
+
+	//fmt.Println("Recid")
+	//fmt.Println(recid)
+	//fmt.Println("Recid")
+
+	return recid
+}
+
+func (sig Signature) SigEthereum() ([]byte, error) {
+	IsOverHalfOrder := sig.S.IsOverHalfOrder() // s-values greater than secp256k1n/2 are considered invalid
+
+	if IsOverHalfOrder {
+		sig.S.Negate()
+	}
+
+	r, err := sig.R.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+	s, err := sig.S.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+
+	rs := make([]byte, 0, 65)
+	rs = append(rs, r...)
+	rs = append(rs, s...)
+
+	if IsOverHalfOrder {
+		v := rs[0] - 2 // Convert to Ethereum signature format with 'recovery id' v at the end.
+		copy(rs, rs[1:])
+		rs[64] = v ^ 1
+	} else {
+		v := rs[0] - 2
+		copy(rs, rs[1:])
+		rs[64] = v
+	}
+
+	r[0] = rs[64] + 2
+	if err := sig.R.UnmarshalBinary(r); err != nil {
+		return nil, err
+	}
+
+	return rs, nil
+}
+
 // Marshal marshals a signature to a byte slice.
 func (sig Signature) ToEthBytes() ([]byte, error) {
 	rb, err := sig.R.MarshalBinary()

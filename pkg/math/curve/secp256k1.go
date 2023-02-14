@@ -134,6 +134,10 @@ func (s *Secp256k1Scalar) Mul(that Scalar) Scalar {
 	return s
 }
 
+func (s *Secp256k1Scalar) IsOverHalfOrder() bool {
+	return s.value.IsOverHalfOrder()
+}
+
 func (s *Secp256k1Scalar) Invert() Scalar {
 	s.value.InverseNonConst()
 	return s
@@ -142,6 +146,10 @@ func (s *Secp256k1Scalar) Invert() Scalar {
 func (s *Secp256k1Scalar) Negate() Scalar {
 	s.value.Negate()
 	return s
+}
+
+func (s *Secp256k1Scalar) Value() *secp256k1.ModNScalar {
+	return &s.value
 }
 
 func (s *Secp256k1Scalar) Equal(that Scalar) bool {
