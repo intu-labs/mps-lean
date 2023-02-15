@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"math/big"
 	"sync"
@@ -292,6 +293,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	}
 
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
+	refreshConfig = ChangeConfig(refreshConfig, id, 5, 3, shares)
 	signers := ids[:threshold+1]
 	if !signers.Contains(id) {
 		n.Quit(id)
@@ -379,15 +381,28 @@ func main() {
 	wg.Wait()
 }
 
+func hexDecode(s string) []byte {
+	decoded, _ := hex.DecodeString(s)
+	return decoded
+}
+
 func ChangeConfig(Paillier *paillier.SecretKey, id party.ID, ids party.IDSlice, n int, t int, shares map[party.ID]*curve.Scalar, c *cmp.Config) (*cmp.Config, error) {
 
-	shares := [c6f41b6941ba2e10560bae52d5c16a215ce9ce8c2dd0bccb846ad6996c4f2190, 851c366b5b17c267ad3fe27301324b387659ab2c3c20a4eab90c5ee6da01b48d, d0fed3d9463bd8cb21c0905030d3a2473c5355e2baa7c7bd770d9ffdff0dba85, cacdf8283da71a30b3611d99565e66491a7902fa4ac5c7ecd800ed2e15619802, 92bba7cd7bda2f8e61f4effd638b8e38371bc3a43d22e85db54af8532721f2cf]
-	
+	//shares := [c6f41b6941ba2e10560bae52d5c16a215ce9ce8c2dd0bccb846ad6996c4f2190, 851c366b5b17c267ad3fe27301324b387659ab2c3c20a4eab90c5ee6da01b48d, d0fed3d9463bd8cb21c0905030d3a2473c5355e2baa7c7bd770d9ffdff0dba85, cacdf8283da71a30b3611d99565e66491a7902fa4ac5c7ecd800ed2e15619802, 92bba7cd7bda2f8e61f4effd638b8e38371bc3a43d22e85db54af8532721f2cf]
+
+	Newshares := [][]byte{
+		hexDecode("c6f41b6941ba2e10560bae52d5c16a215ce9ce8c2dd0bccb846ad6996c4f2190"),
+		hexDecode("851c366b5b17c267ad3fe27301324b387659ab2c3c20a4eab90c5ee6da01b48d"),
+		hexDecode("d0fed3d9463bd8cb21c0905030d3a2473c5355e2baa7c7bd770d9ffdff0dba85"),
+		hexDecode("cacdf8283da71a30b3611d99565e66491a7902fa4ac5c7ecd800ed2e15619802"),
+		hexDecode("92bba7cd7bda2f8e61f4effd638b8e38371bc3a43d22e85db54af8532721f2cf"),
+	}
+
 	c.Threshold = t
-	c.ECDSA = *shares[id]
+	c.ECDSA = Newshares[2].encoding.BinaryUnmarshaler
+	//c.ECDSA = *shares[id]
 	c.ID = id
 	c.Paillier = Paillier
 
 	return c, nil
 }
-
