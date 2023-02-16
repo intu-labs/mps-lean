@@ -124,10 +124,15 @@ func CombineSignatures(SigmaShares []curve.Scalar, specialConfig []sign.Signatur
 
 func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) (sign.SignatureParts, error) {
 	//this is my special function to get the users Groupsignature parts
+	fmt.Print("PT1")
 	h, _ := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl, justinfo), nil)
+	fmt.Print("PT2")
 	test.HandlerLoop(c.ID, h, n)
+	fmt.Print("PT3")
 	signResult, _ := h.Result()
+	fmt.Print("PT4")
 	sigparts := signResult.(sign.SignatureParts)
+	fmt.Print("PT5")
 	return sigparts, nil
 }
 
@@ -293,70 +298,73 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	}
 
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
-	refreshConfig = ChangeConfig(refreshConfig, id, 5, 3, shares)
+	refreshConfig, err = ChangeConfig(id, refreshConfig)
+	fmt.Print("Change Config Done")
 	signers := ids[:threshold+1]
 	if !signers.Contains(id) {
 		n.Quit(id)
 		return nil
 	}
 
-	for i := 1; i < 10; i++ {
+	//for i := 1; i < 10; i++ {
 
-		if id == "a" {
-			FundEOA(client1, masterPublicAddress)
-			FormTransaction(client1)
-		}
-		fmt.Println("HERRE")
-
-		var unmarshalledSigData *sign.SignatureParts
-		unmarshalledConfig := unmarshalledSigData.EmptyConfig()
-
-		sigparts, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
-		signatureConfigArray = append(signatureConfigArray, sigparts)
-		marshalledConfig, err := cbor.Marshal(sigparts)
-		if err != nil {
-			fmt.Println(err)
-		}
-		//store marshalledconfigs
-		err = cbor.Unmarshal(marshalledConfig, &unmarshalledConfig)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		if id == "a" {
-			share := SingleSign(signatureConfigArray[0], finalDataToSign)
-			signaturesArray = append(signaturesArray, share)
-			fmt.Println(id)
-			fmt.Println(signaturesArray)
-
-			/*sigForVerification, _ := signature.ToEthBytes()
-			sig := hexutil.MustDecode("0x" + common.Bytes2Hex(sigForVerification))
-			emptyNewTxSigned, _ := finalEmptyTx.WithSignature(types.LatestSignerForChainID(chainID1), sig)
-			fmt.Println(emptyNewTxSigned)
-			meh := client1.SendTransaction(context.Background(), emptyNewTxSigned)
-			fmt.Println("SIGNED WITH WITHSIGNATURE")
-			spew.Dump(meh)
-			ParseTransactionBaseInfo(emptyNewTxSigned)*/
-		}
-
-		if id == "b" {
-			share := SingleSign(signatureConfigArray[1], finalDataToSign)
-			signaturesArray = append(signaturesArray, share)
-			fmt.Println(id)
-			fmt.Println(signaturesArray)
-		}
-
-		if id == "c" {
-			share := SingleSign(signatureConfigArray[2], finalDataToSign)
-			signaturesArray = append(signaturesArray, share)
-			fmt.Println(id)
-			fmt.Println(signaturesArray)
-		}
-
-		if id == "c" || id == "d" || id == "e" || id == "" {
-			SendTransaction(signaturesArray, signatureConfigArray)
-		}
+	if id == "a" {
+		FundEOA(client1, masterPublicAddress)
+		FormTransaction(client1)
 	}
+	fmt.Println("HERRE")
+
+	var unmarshalledSigData *sign.SignatureParts
+	unmarshalledConfig := unmarshalledSigData.EmptyConfig()
+
+	fmt.Print("Before extra info")
+	sigparts, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
+	fmt.Print("After EXTRA INFO")
+	signatureConfigArray = append(signatureConfigArray, sigparts)
+	marshalledConfig, err := cbor.Marshal(sigparts)
+	if err != nil {
+		fmt.Println(err)
+	}
+	//store marshalledconfigs
+	err = cbor.Unmarshal(marshalledConfig, &unmarshalledConfig)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if id == "a" {
+		share := SingleSign(signatureConfigArray[0], finalDataToSign)
+		signaturesArray = append(signaturesArray, share)
+		fmt.Println(id)
+		fmt.Println(signaturesArray)
+
+		/*sigForVerification, _ := signature.ToEthBytes()
+		sig := hexutil.MustDecode("0x" + common.Bytes2Hex(sigForVerification))
+		emptyNewTxSigned, _ := finalEmptyTx.WithSignature(types.LatestSignerForChainID(chainID1), sig)
+		fmt.Println(emptyNewTxSigned)
+		meh := client1.SendTransaction(context.Background(), emptyNewTxSigned)
+		fmt.Println("SIGNED WITH WITHSIGNATURE")
+		spew.Dump(meh)
+		ParseTransactionBaseInfo(emptyNewTxSigned)*/
+	}
+
+	if id == "b" {
+		share := SingleSign(signatureConfigArray[1], finalDataToSign)
+		signaturesArray = append(signaturesArray, share)
+		fmt.Println(id)
+		fmt.Println(signaturesArray)
+	}
+
+	if id == "c" {
+		share := SingleSign(signatureConfigArray[2], finalDataToSign)
+		signaturesArray = append(signaturesArray, share)
+		fmt.Println(id)
+		fmt.Println(signaturesArray)
+	}
+
+	if id == "c" || id == "d" || id == "e" || id == "" {
+		SendTransaction(signaturesArray, signatureConfigArray)
+	}
+	//}
 
 	return nil
 }
@@ -386,23 +394,45 @@ func hexDecode(s string) []byte {
 	return decoded
 }
 
-func ChangeConfig(Paillier *paillier.SecretKey, id party.ID, ids party.IDSlice, n int, t int, shares map[party.ID]*curve.Scalar, c *cmp.Config) (*cmp.Config, error) {
+func ChangeConfig(id party.ID /*, t int ,shares map[party.ID]*curve.Scalar,*/, c *cmp.Config) (*cmp.Config, error) {
 
 	//shares := [c6f41b6941ba2e10560bae52d5c16a215ce9ce8c2dd0bccb846ad6996c4f2190, 851c366b5b17c267ad3fe27301324b387659ab2c3c20a4eab90c5ee6da01b48d, d0fed3d9463bd8cb21c0905030d3a2473c5355e2baa7c7bd770d9ffdff0dba85, cacdf8283da71a30b3611d99565e66491a7902fa4ac5c7ecd800ed2e15619802, 92bba7cd7bda2f8e61f4effd638b8e38371bc3a43d22e85db54af8532721f2cf]
 
 	Newshares := [][]byte{
-		hexDecode("c6f41b6941ba2e10560bae52d5c16a215ce9ce8c2dd0bccb846ad6996c4f2190"),
-		hexDecode("851c366b5b17c267ad3fe27301324b387659ab2c3c20a4eab90c5ee6da01b48d"),
-		hexDecode("d0fed3d9463bd8cb21c0905030d3a2473c5355e2baa7c7bd770d9ffdff0dba85"),
-		hexDecode("cacdf8283da71a30b3611d99565e66491a7902fa4ac5c7ecd800ed2e15619802"),
-		hexDecode("92bba7cd7bda2f8e61f4effd638b8e38371bc3a43d22e85db54af8532721f2cf"),
+		hexDecode("47962eac362abb5d9cf1d045e762f91eb38a1200499220ad05cc2f23ad677b1f"),
+		hexDecode("d782daf027fbf913e2f43462c86740fbe9fcd0ab141c23de6526fab3b99acf19"),
 	}
 
-	c.Threshold = t
-	c.ECDSA = Newshares[2].encoding.BinaryUnmarshaler
-	//c.ECDSA = *shares[id]
+	c.Threshold = 1
+	var group = curve.Secp256k1{}
+
+	if id == "a" {
+		//scalarTest := curve.FromHash(group, hexDecode("c6f41b6941ba2e10560bae52d5c16a215ce9ce8c2dd0bccb846ad6996c4f2190"))
+		scalarTest := curve.FromHash(group, Newshares[0])
+		//c.ECDSA = *shares[id]
+		c.ECDSA = scalarTest
+
+		varPaillier := paillier.NewSecretKey(nil)
+		c.Paillier = varPaillier
+		//c.Paillier = paillier.PublicKey{}
+		/*var1 := c.Public[id].ElGamal
+		var2 := c.Public[id].Pedersen
+		var3 := c.Public[id].ECDSA*/
+		//public1 := cmp.Config.Public{varPaillier, var1, var2, var3}
+		//varPublic := cmp.Config.Public{varPaillier, var1, var2, var3}
+		c.Public["b"].Paillier = varPaillier.PublicKey
+	}
+
+	if id == "b" {
+		scalarTest := curve.FromHash(group, Newshares[1])
+		c.ECDSA = scalarTest
+
+		varPaillier := paillier.NewSecretKey(nil)
+		c.Paillier = varPaillier
+		c.Public["a"].Paillier = varPaillier.PublicKey
+	}
+
 	c.ID = id
-	c.Paillier = Paillier
 
 	return c, nil
 }
