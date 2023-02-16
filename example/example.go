@@ -8,7 +8,6 @@ import (
 	_ "log"
 	"math/big"
 	"sync"
-	"time"
 	_ "time"
 
 	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
@@ -96,6 +95,8 @@ func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, err
 func SingleSign(specialConfig sign.SignatureParts, message []byte) (signresult curve.Scalar) {
 	//this signs a message for a single participant using their signatureparts
 	group := specialConfig.Group
+
+
 	KShare := specialConfig.GroupKShare
 	BigR := specialConfig.GroupBigR // R = [δ⁻¹] Γ
 	R := BigR.XScalar()             // r = R|ₓ
@@ -199,7 +200,7 @@ func FormTransaction(client1 *ethclient.Client) ([]byte, error) {
 	
 	finalEmptyTx = emptyNewTx
 
-	blah := []interface{}{
+	emptyNewTxInterface := []interface{}{
 		chainID1,
 		emptyNewTx.Nonce(),
 		emptyNewTx.GasTipCap(),
@@ -211,7 +212,7 @@ func FormTransaction(client1 *ethclient.Client) ([]byte, error) {
 		emptyNewTx.AccessList(),
 	}
 
-	hashtoSign := prefixedRlpHash(emptyNewTx.Type(), blah)
+	hashtoSign := prefixedRlpHash(emptyNewTx.Type(), emptyNewTxInterface)
 	hashBytes := hashtoSign.Bytes()
 	finalDataToSign = hashBytes
 	fmt.Println("DATATOSIGN")
@@ -259,7 +260,6 @@ func SendTransaction(SigmaShares []curve.Scalar, specialConfig []sign.SignatureP
 	//fmt.Println("SIGNED WITH WITHSIGNATURE")
 	//spew.Dump(meh)
 	ParseTransactionBaseInfo(emptyNewTxSigned)
-	time.Sleep(5 * time.Second)
 
 	return nil
 }
@@ -301,6 +301,7 @@ func prefixedRlpHash(prefix byte, x interface{}) (h common.Hash) {
 
 
 func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.Network, wg *sync.WaitGroup, pl *pool.Pool) error {
+
 	var client1, _ = ethclient.Dial(endpoint)
 	defer wg.Done()
 	err := XOR(id, ids, n)
