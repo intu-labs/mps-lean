@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/anyswap/FastMulThreshold-DSA v0.0.0-20220614042504-9a020dd032eb
 	github.com/cronokirby/safenum v0.29.0
+	github.com/cronokirby/saferith v0.33.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/decred/dcrd/dcrec/secp256k1/v3 v3.0.0
 	github.com/ethereum/go-ethereum v1.10.26
