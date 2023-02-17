@@ -3,12 +3,12 @@ package arith
 import (
 	"math/big"
 
-	"github.com/cronokirby/safenum"
+	"github.com/cronokirby/saferith"
 	"github.com/w3-key/mps-lean/pkg/params"
 )
 
 // IsValidNatModN checks that ints are all in the range [1,…,N-1] and co-prime to N.
-func IsValidNatModN(N *safenum.Modulus, ints ...*safenum.Nat) bool {
+func IsValidNatModN(N *saferith.Modulus, ints ...*saferith.Nat) bool {
 	for _, i := range ints {
 		if i == nil {
 			return false
@@ -46,7 +46,7 @@ func IsValidBigModN(N *big.Int, ints ...*big.Int) bool {
 }
 
 // IsInIntervalLEps returns true if n ∈ [-2ˡ⁺ᵉ,…,2ˡ⁺ᵉ].
-func IsInIntervalLEps(n *safenum.Int) bool {
+func IsInIntervalLEps(n *saferith.Int) bool {
 	if n == nil {
 		return false
 	}
@@ -54,7 +54,7 @@ func IsInIntervalLEps(n *safenum.Int) bool {
 }
 
 // IsInIntervalLPrimeEps returns true if n ∈ [-2ˡ'⁺ᵉ,…,2ˡ'⁺ᵉ].
-func IsInIntervalLPrimeEps(n *safenum.Int) bool {
+func IsInIntervalLPrimeEps(n *saferith.Int) bool {
 	if n == nil {
 		return false
 	}
