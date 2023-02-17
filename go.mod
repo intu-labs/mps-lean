@@ -19,6 +19,7 @@ require (
 require (
 	github.com/aead/ecdh v0.2.0 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
+	github.com/cronokirby/saferith v0.33.0 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
 	github.com/ecies/go/v2 v2.0.4 // indirect
