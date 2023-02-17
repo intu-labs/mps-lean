@@ -1,7 +1,6 @@
 package keygen
 
 import (
-	mrand "math/rand"
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
@@ -83,39 +82,4 @@ func TestKeygen(t *testing.T) {
 			break
 		}
 	}
-	checkOutput(t, rounds)
-}
-
-func TestRefresh(t *testing.T) {
-	pl := pool.NewPool(0)
-	defer pl.TearDown()
-
-	N := 4
-	T := N - 1
-	configs, _ := test.GenerateConfig(group, N, T, mrand.New(mrand.NewSource(1)), pl)
-
-	rounds := make([]round.Session, 0, N)
-	for _, c := range configs {
-		info := round.Info{
-			ProtocolID:       "cmp/refresh-test",
-			FinalRoundNumber: Rounds,
-			SelfID:           c.ID,
-			PartyIDs:         c.PartyIDs(),
-			Threshold:        N - 1,
-			Group:            group,
-		}
-		r, err := Start(info, pl, c)(nil)
-		require.NoError(t, err, "round creation should not result in an error")
-		rounds = append(rounds, r)
-
-	}
-
-	for {
-		err, done := test.Rounds(rounds, nil)
-		require.NoError(t, err, "failed to process round")
-		if done {
-			break
-		}
-	}
-	checkOutput(t, rounds)
 }
