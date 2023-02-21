@@ -327,6 +327,8 @@ func (h *MultiHandler) finalize() {
 	}
 
 	// we only do this if the current round has changed
+
+	//fmt.Print("\n COUNT")
 	h.finalize()
 }
 
