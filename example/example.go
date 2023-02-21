@@ -305,10 +305,11 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		fmt.Println("EOA ADDRESS: ", keygenConfig.PublicPoint().ToAddress())
 		masterPublicAddress = keygenConfig.PublicPoint().ToAddress()
 	}
-
+	//maybe refresh after changing config
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
 	changedConfig, err := ChangeConfig(id, refreshConfig)
-	fmt.Print("Change Config Done")
+	changedConfig2, err := CMPRefresh(changedConfig, n, pl)
+	fmt.Print("\n Change Config Done \n")
 	signers := ids[:threshold+1]
 	if !signers.Contains(id) {
 		n.Quit(id)
@@ -321,13 +322,12 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 		FundEOA(client1, masterPublicAddress)
 		FormTransaction(client1)
 	}
-	fmt.Println("HERRE")
 
 	var unmarshalledSigData *sign.SignatureParts
 	unmarshalledConfig := unmarshalledSigData.EmptyConfig()
 
-	fmt.Print("Before extra info")
-	sigparts, _ := CMPSignGetExtraInfo(changedConfig, message, signers, n, pl, true)
+	fmt.Print("\n Before extra info :SIGNING")
+	sigparts, _ := CMPSignGetExtraInfo(changedConfig2, message, signers, n, pl, true)
 	fmt.Print("After EXTRA INFO")
 	signatureConfigArray = append(signatureConfigArray, sigparts)
 	marshalledConfig, err := cbor.Marshal(sigparts)
@@ -431,6 +431,8 @@ func ChangeConfig(id party.ID /*, t int ,shares map[party.ID]*curve.Scalar,*/, c
 		//public1 := cmp.Config.Public{varPaillier, var1, var2, var3}
 		//varPublic := cmp.Config.Public{varPaillier, var1, var2, var3}
 		c.Public["b"].Paillier = varPaillier.PublicKey //paillier.NewPublicKey(nil)
+
+		//see print.dew from steven
 	}
 
 	if id == "b" {
