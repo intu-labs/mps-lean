@@ -2,6 +2,7 @@ package sign
 
 import (
 	"crypto/rand"
+	"fmt"
 
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 	"github.com/w3-key/mps-lean/pkg/math/sample"
@@ -24,9 +25,9 @@ type round1 struct {
 	Paillier       map[party.ID]*paillier.PublicKey
 	Pedersen       map[party.ID]*pedersen.Parameters
 	ECDSA          map[party.ID]curve.Point
-	Message []byte
-	JustInfo      bool
-	PublicPoint curve.Point
+	Message        []byte
+	JustInfo       bool
+	PublicPoint    curve.Point
 }
 
 // VerifyMessage implements round.Round.
@@ -91,6 +92,8 @@ func (r *round1) Finalize(out chan<- *round.Message) (round.Session, error) {
 			return r, err.(error)
 		}
 	}
+
+	fmt.Print("\n \n round1 \n \n ")
 
 	return &round2{
 		round1:        r,

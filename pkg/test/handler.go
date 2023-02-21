@@ -17,16 +17,20 @@ func HandlerLoop(id party.ID, h protocol.Handler, network *Network) {
 			if !ok {
 				<-network.Done(id)
 				fmt.Print("\n CLOSE", id)
+				fmt.Println("\n", msg)
 				// the channel was closed, indicating that the protocol is done executing.
 				return
 			}
 			go network.Send(msg)
 			fmt.Print("\n OPEN", id)
+			fmt.Println("\n", msg)
 
 		// incoming messages
 		case msg := <-network.Next(id):
 			h.Accept(msg)
 			fmt.Print("\n Incoming", id)
+
+			fmt.Println("\n", msg)
 		}
 	}
 }

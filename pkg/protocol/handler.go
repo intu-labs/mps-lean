@@ -61,6 +61,7 @@ func NewMultiHandler(create StartFunc, sessionID []byte) (*MultiHandler, error) 
 		broadcastHashes: map[round.Number][]byte{},
 		out:             make(chan *Message, 2*r.N()),
 	}
+	fmt.Print("\n ROUNDNUMBER \n ", h.currentRound.Number())
 	h.finalize()
 	return h, nil
 }
@@ -236,8 +237,11 @@ func (h *MultiHandler) Finalize() {
 }
 
 func (h *MultiHandler) finalize() {
+	fmt.Print("\n ROUNDNUMBER \n ", h.currentRound.Number())
+
 	// only finalize if we have received all messages
 	if !h.receivedAll() {
+
 		return
 	}
 	if !h.checkBroadcastHash() {
@@ -329,6 +333,8 @@ func (h *MultiHandler) finalize() {
 	// we only do this if the current round has changed
 
 	//fmt.Print("\n COUNT")
+	//fmt.Print("\n ROUNDNUMBER \n ", h.currentRound.Number())
+
 	h.finalize()
 }
 

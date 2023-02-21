@@ -2,6 +2,7 @@ package sign
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/cronokirby/safenum"
 	"github.com/w3-key/mps-lean/pkg/math/curve"
@@ -104,6 +105,7 @@ func (round2) StoreMessage(round.Message) error { return nil }
 //
 // - compute Hash(ssid, K₁, G₁, …, Kₙ, Gₙ).
 func (r *round2) Finalize(out chan<- *round.Message) (round.Session, error) {
+
 	if err := r.BroadcastMessage(out, &broadcast3{
 		BigGammaShare: r.BigGammaShare[r.SelfID()],
 	}); err != nil {
@@ -116,6 +118,7 @@ func (r *round2) Finalize(out chan<- *round.Message) (round.Session, error) {
 		DeltaBeta *safenum.Int
 		ChiBeta   *safenum.Int
 	}
+
 	mtaOuts := r.Pool.Parallelize(len(otherIDs), func(i int) interface{} {
 		j := otherIDs[i]
 		DeltaBeta, DeltaD, DeltaF, DeltaProof := mta.ProveAffG(r.Group(), r.HashForID(r.SelfID()),
@@ -162,6 +165,8 @@ func (r *round2) Finalize(out chan<- *round.Message) (round.Session, error) {
 		DeltaShareBetas[j] = m.DeltaBeta
 		ChiShareBetas[j] = m.ChiBeta
 	}
+
+	fmt.Print("\n \n round2 \n \n ")
 
 	return &round3{
 		round2:          r,

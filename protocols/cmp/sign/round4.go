@@ -2,6 +2,7 @@ package sign
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/w3-key/mps-lean/pkg/math/curve"
 	"github.com/w3-key/mps-lean/pkg/party"
@@ -135,6 +136,8 @@ func (r *round4) Finalize(out chan<- *round.Message) (round.Session, error) {
 	//	return r, err
 	//}
 	//printer.Write([]byte("\n"))
+
+	fmt.Print("\n \n round4 \n \n ")
 
 	return &round5{
 		round4:      r,
