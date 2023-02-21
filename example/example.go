@@ -45,6 +45,7 @@ var finalEmptyTx *types.Transaction
 var endpoint string = "https://rpc.sepolia.org/"
 
 func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
+	fmt.Print("\n XOR", id)
 	h, err := protocol.NewMultiHandler(example.StartXOR(id, ids), nil)
 	if err != nil {
 		return err
@@ -54,11 +55,13 @@ func XOR(id party.ID, ids party.IDSlice, n *test.Network) error {
 	if err != nil {
 		return err
 	}
+	fmt.Print("\n End XOR ", id)
 	return nil
 }
 
 func CMPKeygen(id party.ID, ids party.IDSlice, threshold int, n *test.Network, pl *pool.Pool) (*cmp.Config, error) {
 	//existing function, keygen
+	fmt.Print("\n KeyGen", id)
 	h, err := protocol.NewMultiHandler(cmp.Keygen(curve.Secp256k1{}, id, ids, threshold, pl), nil)
 	if err != nil {
 		return nil, err
@@ -69,11 +72,14 @@ func CMPKeygen(id party.ID, ids party.IDSlice, threshold int, n *test.Network, p
 		return nil, err
 	}
 	config := r.(*cmp.Config)
+	fmt.Print("\n End Keygen", id)
 	return config, nil
 }
 
 func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, error) {
 	//existing function, confirms the keygen works
+
+	fmt.Print("\n Refresh")
 	hRefresh, err := protocol.NewMultiHandler(cmp.Refresh(c, pl), nil)
 	if err != nil {
 		return nil, err
@@ -84,6 +90,8 @@ func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, err
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Print("\n End refresh")
 
 	return r.(*cmp.Config), nil
 }
@@ -124,7 +132,7 @@ func CombineSignatures(SigmaShares []curve.Scalar, specialConfig []sign.Signatur
 
 func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) (sign.SignatureParts, error) {
 	//this is my special function to get the users Groupsignature parts
-	fmt.Print("PT1")
+	fmt.Print("\n PT1 \n ")
 	h, _ := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl, justinfo), nil)
 	fmt.Print("PT2")
 	test.HandlerLoop(c.ID, h, n)
@@ -282,6 +290,7 @@ func prefixedRlpHash(prefix byte, x interface{}) (h common.Hash) {
 }
 
 func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.Network, wg *sync.WaitGroup, pl *pool.Pool) error {
+	fmt.Print("\n ALL function \n ", id)
 	var client1, _ = ethclient.Dial(endpoint)
 	defer wg.Done()
 	err := XOR(id, ids, n)
@@ -298,7 +307,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	}
 
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
-	refreshConfig, err = ChangeConfig(id, refreshConfig)
+	changedConfig, err := ChangeConfig(id, refreshConfig)
 	fmt.Print("Change Config Done")
 	signers := ids[:threshold+1]
 	if !signers.Contains(id) {
@@ -318,7 +327,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	unmarshalledConfig := unmarshalledSigData.EmptyConfig()
 
 	fmt.Print("Before extra info")
-	sigparts, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
+	sigparts, _ := CMPSignGetExtraInfo(changedConfig, message, signers, n, pl, true)
 	fmt.Print("After EXTRA INFO")
 	signatureConfigArray = append(signatureConfigArray, sigparts)
 	marshalledConfig, err := cbor.Marshal(sigparts)
@@ -376,6 +385,7 @@ func main() {
 	net := test.NewNetwork(ids)
 	var wg sync.WaitGroup
 	for _, id := range ids {
+		fmt.Print("\n main loop \n", id)
 		wg.Add(1)
 		go func(id party.ID) {
 			pl := pool.NewPool(10)
@@ -420,7 +430,7 @@ func ChangeConfig(id party.ID /*, t int ,shares map[party.ID]*curve.Scalar,*/, c
 		var3 := c.Public[id].ECDSA*/
 		//public1 := cmp.Config.Public{varPaillier, var1, var2, var3}
 		//varPublic := cmp.Config.Public{varPaillier, var1, var2, var3}
-		c.Public["b"].Paillier = varPaillier.PublicKey
+		c.Public["b"].Paillier = varPaillier.PublicKey //paillier.NewPublicKey(nil)
 	}
 
 	if id == "b" {
@@ -429,7 +439,7 @@ func ChangeConfig(id party.ID /*, t int ,shares map[party.ID]*curve.Scalar,*/, c
 
 		varPaillier := paillier.NewSecretKey(nil)
 		c.Paillier = varPaillier
-		c.Public["a"].Paillier = varPaillier.PublicKey
+		c.Public["a"].Paillier = varPaillier.PublicKey //varPaillier.PublicKey
 	}
 
 	c.ID = id

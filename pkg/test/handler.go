@@ -1,6 +1,8 @@
 package test
 
 import (
+	"fmt"
+
 	"github.com/w3-key/mps-lean/pkg/party"
 	"github.com/w3-key/mps-lean/pkg/protocol"
 )
@@ -16,12 +18,15 @@ func HandlerLoop(id party.ID, h protocol.Handler, network *Network) {
 				<-network.Done(id)
 				// the channel was closed, indicating that the protocol is done executing.
 				return
+				fmt.Print("CASE1")
 			}
 			go network.Send(msg)
 
 		// incoming messages
 		case msg := <-network.Next(id):
 			h.Accept(msg)
+			fmt.Print("CASE1")
+
 		}
 	}
 }
