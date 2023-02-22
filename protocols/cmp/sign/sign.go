@@ -23,8 +23,6 @@ const (
 )
 
 type SignatureParts struct {
-	GroupDelta curve.Scalar
-	GroupBigDelta curve.Point
 	GroupKShare curve.Scalar
 	GroupBigR curve.Point
 	GroupChiShare curve.Scalar
@@ -35,22 +33,12 @@ type SignatureParts struct {
 func (s *SignatureParts) EmptyConfig() SignatureParts {
 	newGroup := curve.Secp256k1{}
 	return SignatureParts{
-		GroupDelta: newGroup.NewScalar(),
-		GroupBigDelta: newGroup.NewPoint(),
 		GroupKShare: newGroup.NewScalar(),
 		GroupBigR: newGroup.NewPoint(),
 		GroupChiShare: newGroup.NewScalar(),
 		Group: newGroup,
 		GroupPublicPoint: newGroup.NewPoint(),
 	}
-}
-
-func (s *SignatureParts) GetDelta() curve.Scalar {
-	return s.GroupDelta
-}
-
-func (s *SignatureParts) GetBigDelta() curve.Point {
-	return s.GroupBigDelta
 }
 
 func (s *SignatureParts) GetKShare() curve.Scalar {

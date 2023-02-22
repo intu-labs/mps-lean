@@ -8,12 +8,12 @@ import (
 	_ "log"
 	"math/big"
 	"sync"
+	"time"
 	_ "time"
 
 	ethereumcrypto "github.com/ethereum/go-ethereum/crypto"
 	"golang.org/x/crypto/sha3"
 
-	"github.com/davecgh/go-spew/spew"
 	_ "github.com/davecgh/go-spew/spew"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -229,11 +229,7 @@ func SendTransaction(SigmaShares []curve.Scalar, specialConfig []sign.SignatureP
   //IMPORTANT CALLOUT HERE, I CHANGED THE the function below to use GetRecoverId instead of GetEthRecoverId. This allowed the rest of this stuff to verify.	
 	sigForVerification, _ := signature.SigEthereum()
 
-
 	sig := hexutil.MustDecode("0x" + common.Bytes2Hex(sigForVerification))
-	fmt.Println("sig")
-	fmt.Println(sig)
-	fmt.Println("sig")
 	//Comemnting this out, it continually resolves to the EOA ADDRESS / masterpublickey, keeping it here in case we need to test it again.
 	//recovered, err := crypto.SigToPub(finalDataToSign, sig)
 	//if err != nil {
@@ -344,39 +340,32 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	spew.Dump(signaturesArray)
-
+fmt.Println("keygendone")
 	if (id == "a") {
 		share := SingleSign(signatureConfigArray[0], finalDataToSign)
 		signaturesArray = append(signaturesArray,share)
 		fmt.Println("A SEND TX")
-		spew.Dump(share)
-		//tempArray1 := append(tempArray1,share)
-		//SendTransaction(tempArray1, signatureConfigArray)
+		SendTransaction(signaturesArray, signatureConfigArray)
 	}
+	time.Sleep(5 * time.Second)
 
 	if (id == "b") {
 		share := SingleSign(signatureConfigArray[1], finalDataToSign)
 		signaturesArray = append(signaturesArray,share)
-		fmt.Println("B SEND TX COMBINED")
-		spew.Dump(share)
 		//tempArray2 := append(tempArray1,share)
-		//SendTransaction(tempArray2, signatureConfigArray)
+		fmt.Println("b SEND TX")
+		SendTransaction(signaturesArray, signatureConfigArray)
 	}
 
-	if (id == "b") {
-		share := SingleSign(signatureConfigArray[2], finalDataToSign)
-		signaturesArray = append(signaturesArray,share)
-		fmt.Println("C SEND TX COMBINED")
-		spew.Dump(share)
-		//tempArray2 := append(tempArray1,share)
-		//SendTransaction(tempArray2, signatureConfigArray)
-	}
 
-	fmt.Println("after both, combine")
-	SendTransaction(signaturesArray, signatureConfigArray)
-
+	//if (id == "c") {
+	//	share := SingleSign(signatureConfigArray[2], finalDataToSign)
+	//	signaturesArray = append(signaturesArray,share)
+	//	//tempArray2 := append(tempArray1,share)
+	//	//SendTransaction(tempArray2, signatureConfigArray)
+	//}
+	//time.Sleep(2 * time.Second)
+	
 	//if (id == "b" || id == "c" || id == "d" || id == "e") {
 	//SendTransaction(signaturesArray, signatureConfigArray)
 	//}
@@ -386,7 +375,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 
 func main() {
 	ids := party.IDSlice{"a", "b", "c"}
-	threshold := 2
+	threshold := 1
 	messageToSign := ethereumcrypto.Keccak256([]byte("pariskeymessage"))
 	net := test.NewNetwork(ids)
 	var wg sync.WaitGroup

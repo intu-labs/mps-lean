@@ -90,8 +90,6 @@ func (r *round5) Finalize(chan<- *round.Message) (round.Session, error) {
 	}
 
 	signatureParts := SignatureParts{
-		r.Delta,
-		r.BigDelta,
 		r.KShare,
 		r.BigR,
 		r.ChiShare,
