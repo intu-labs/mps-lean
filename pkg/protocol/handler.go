@@ -237,6 +237,8 @@ func (h *MultiHandler) Finalize() {
 }
 
 func (h *MultiHandler) finalize() {
+	counter := 0
+	fmt.Print("COUNTER", counter)
 	fmt.Print("\n ROUNDNUMBER \n ", h.currentRound.Number())
 
 	// only finalize if we have received all messages
@@ -252,7 +254,11 @@ func (h *MultiHandler) finalize() {
 	out := make(chan *round.Message, h.currentRound.N()+1)
 	// since we pass a large enough channel, we should never get an error
 	r, err := h.currentRound.Finalize(out)
+
+	fmt.Print("BEFORE CLOSING CHANNEL" /*, h.currentRound.Helper.Info*/)
 	close(out)
+	fmt.Print("After CLOSING CHANNEL")
+
 	// either we got an error due to some problem on our end (sampling etc)
 	// or the new round is nil (should not happen)
 	if err != nil || r == nil {
@@ -333,7 +339,10 @@ func (h *MultiHandler) finalize() {
 	// we only do this if the current round has changed
 
 	//fmt.Print("\n COUNT")
-	//fmt.Print("\n ROUNDNUMBER \n ", h.currentRound.Number())
+	fmt.Print("\n ROUNDNUMBER \n ", h.currentRound.Number())
+
+	counter += 1
+	fmt.Print("COUNTER", counter) //we should have 5 at the end, but we only have 1...
 
 	h.finalize()
 }

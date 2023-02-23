@@ -96,6 +96,26 @@ func CMPRefresh(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, err
 	return r.(*cmp.Config), nil
 }
 
+/*func CMPReshare(c *cmp.Config, n *test.Network, pl *pool.Pool) (*cmp.Config, error) {
+	//existing function, confirms the keygen works
+
+	fmt.Print("\n Reshare")
+	hRefresh, err := protocol.NewMultiHandler(cmp.Reshare(c, pl), nil)
+	if err != nil {
+		return nil, err
+	}
+	test.HandlerLoop(c.ID, hRefresh, n)
+
+	r, err := hRefresh.Result()
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Print("\n End refresh")
+
+	return r.(*cmp.Config), nil
+}*/
+
 func SingleSign(specialConfig sign.SignatureParts, message []byte) (signresult curve.Scalar) {
 	//this signs a message for a single participant using their signatureparts
 	group := specialConfig.Group
@@ -307,8 +327,11 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	}
 	//maybe refresh after changing config
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
-	//changedConfig, err := ChangeConfig(id, refreshConfig)
-	//changedConfig2, err := CMPRefresh(changedConfig, n, pl)
+	changedConfig, err := ChangeConfig(id, refreshConfig)
+	changedConfig2, err := CMPRefresh(changedConfig, n, pl)
+
+	//resharedConfig, err := CMPReshare()
+
 	fmt.Print("\n Change Config Done \n")
 	signers := ids[:threshold+1]
 	if !signers.Contains(id) {
@@ -327,7 +350,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	unmarshalledConfig := unmarshalledSigData.EmptyConfig()
 
 	fmt.Print("\n Before extra info :SIGNING")
-	sigparts, _ := CMPSignGetExtraInfo(refreshConfig, message, signers, n, pl, true)
+	sigparts, _ := CMPSignGetExtraInfo(changedConfig2, message, signers, n, pl, true)
 	fmt.Print("After EXTRA INFO")
 	signatureConfigArray = append(signatureConfigArray, sigparts)
 	marshalledConfig, err := cbor.Marshal(sigparts)

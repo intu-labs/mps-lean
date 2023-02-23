@@ -1,4 +1,4 @@
-package resharing
+package reshare
 
 import (
 	"fmt"

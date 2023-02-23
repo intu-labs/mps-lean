@@ -8,6 +8,7 @@ import (
 	"github.com/w3-key/mps-lean/pkg/round"
 	"github.com/w3-key/mps-lean/protocols/cmp/config"
 	"github.com/w3-key/mps-lean/protocols/cmp/keygen"
+	"github.com/w3-key/mps-lean/protocols/cmp/reshare"
 	"github.com/w3-key/mps-lean/protocols/cmp/sign"
 )
 
@@ -61,4 +62,16 @@ func Refresh(config *Config, pl *pool.Pool) protocol.StartFunc {
 // Returns *ecdsa.Signature if successful.
 func Sign(config *Config, signers []party.ID, messageHash []byte, pl *pool.Pool, forkeys bool) protocol.StartFunc {
 	return sign.StartSign(config, signers, messageHash, pl, forkeys)
+}
+
+func Reshare(config *Config, pl *pool.Pool) protocol.StartFunc {
+	info := round.Info{
+		ProtocolID:       "cmp/reshare",
+		FinalRoundNumber: keygen.Rounds,
+		SelfID:           config.ID,
+		PartyIDs:         config.PartyIDs(),
+		Threshold:        config.Threshold,
+		Group:            config.Group,
+	}
+	return reshare.Start(info, pl, config)
 }
