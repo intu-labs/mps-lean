@@ -152,15 +152,12 @@ func CombineSignatures(SigmaShares []curve.Scalar, specialConfig []sign.Signatur
 
 func CMPSignGetExtraInfo(c *cmp.Config, m []byte, signers party.IDSlice, n *test.Network, pl *pool.Pool, justinfo bool) (sign.SignatureParts, error) {
 	//this is my special function to get the users Groupsignature parts
-	fmt.Print("\n PT1 \n ")
+	fmt.Print("\n BeforeNewMultiHandler :  \n ")
 	h, _ := protocol.NewMultiHandler(cmp.Sign(c, signers, m, pl, justinfo), nil)
-	fmt.Print("PT2")
+	fmt.Print("\n HandlerLoop :  \n ")
 	test.HandlerLoop(c.ID, h, n)
-	fmt.Print("PT3")
 	signResult, _ := h.Result()
-	fmt.Print("PT4")
 	sigparts := signResult.(sign.SignatureParts)
-	fmt.Print("PT5")
 	return sigparts, nil
 }
 
@@ -328,7 +325,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	//maybe refresh after changing config
 	refreshConfig, err := CMPRefresh(keygenConfig, n, pl)
 	changedConfig, err := ChangeConfig(id, refreshConfig)
-	changedConfig2, err := CMPRefresh(changedConfig, n, pl)
+	//changedConfig2, err := CMPRefresh(changedConfig, n, pl)
 
 	//resharedConfig, err := CMPReshare()
 
@@ -350,7 +347,7 @@ func All(id party.ID, ids party.IDSlice, threshold int, message []byte, n *test.
 	unmarshalledConfig := unmarshalledSigData.EmptyConfig()
 
 	fmt.Print("\n Before extra info :SIGNING")
-	sigparts, _ := CMPSignGetExtraInfo(changedConfig2, message, signers, n, pl, true)
+	sigparts, _ := CMPSignGetExtraInfo(changedConfig, message, signers, n, pl, true)
 	fmt.Print("After EXTRA INFO")
 	signatureConfigArray = append(signatureConfigArray, sigparts)
 	marshalledConfig, err := cbor.Marshal(sigparts)

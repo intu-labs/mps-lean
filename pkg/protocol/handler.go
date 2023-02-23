@@ -237,8 +237,6 @@ func (h *MultiHandler) Finalize() {
 }
 
 func (h *MultiHandler) finalize() {
-	counter := 0
-	fmt.Print("COUNTER", counter)
 	fmt.Print("\n ROUNDNUMBER \n ", h.currentRound.Number())
 
 	// only finalize if we have received all messages
@@ -337,12 +335,6 @@ func (h *MultiHandler) finalize() {
 	}
 
 	// we only do this if the current round has changed
-
-	//fmt.Print("\n COUNT")
-	fmt.Print("\n ROUNDNUMBER \n ", h.currentRound.Number())
-
-	counter += 1
-	fmt.Print("COUNTER", counter) //we should have 5 at the end, but we only have 1...
 
 	h.finalize()
 }
